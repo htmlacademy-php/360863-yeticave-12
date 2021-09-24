@@ -1,7 +1,7 @@
 # Личный проект «YetiCave»
 
 * Студент: [Леонид Гришин](https://up.htmlacademy.ru/php/12/user/360863).
-* Наставник: `Неизвестно`.
+* Наставник: [Максим Деев](https://htmlacademy.ru/profile/id685777).
 
 ---
 
