@@ -66,7 +66,6 @@ function getTimeLeft ($expirationDate)
     return $timeLeft;
 }
 
-
 $content = include_template('main.php', [
     'categories' => $categories,
     'ads' => $ads,
