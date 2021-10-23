@@ -11,7 +11,7 @@ $ads = [
         'category' => 'Доски и лыжи',
         'price' => '10999',
         'imgUrl' => 'img/lot-1.jpg',
-        'expirationDate' => '2021-11-23',
+        'expirationDate' => '2021-10-23 23:59',
     ],
     [
         'title' => 'DC Ply Mens 2016/2017 Snowboard',
@@ -58,17 +58,13 @@ function formatAdPrice($price){
 function getTimeLeft ($expirationDate)
 {
     $timeNow = date_create(date("Y-m-d H:i")); //2021-10-23
-    $timeExpiration = date_create($expirationDate); //2021-11-25
-    $intervalHours = +date_interval_format(date_diff($timeNow, $timeExpiration),
-            "%a") * 24 + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H");
-    $intervalMinutes = date_interval_format(date_diff($timeNow, $timeExpiration), "%i");
+    $timeExpiration = date_create(/*$ads[0]['expirationDate']*/$expirationDate); //2021-11-25
+    $intervalHours = str_pad(+date_interval_format(date_diff($timeNow, $timeExpiration),
+            "%a") * 24 + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H"), 2, "0", STR_PAD_LEFT);
+    $intervalMinutes = str_pad(date_interval_format(date_diff($timeNow, $timeExpiration), "%i"), 2, "0", STR_PAD_LEFT);
     $timeLeft = $intervalHours . ":" . $intervalMinutes;
     return $timeLeft;
 }
-
-
-
-
 
 
 $content = include_template('main.php', [
