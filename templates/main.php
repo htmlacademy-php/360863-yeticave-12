@@ -25,7 +25,7 @@
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= formatAdPrice(htmlspecialchars($ad['price'])); ?></span>
+                            <span class="lot__cost"><?= $ad['price'] /*formatAdPrice(htmlspecialchars($ad['price']))*/; ?></span>
                         </div>
                         <div class="lot__timer timer <?= +explode(':', getTimeLeft($ad['expirationDate']))[0] === 00 ? 'timer--finishing': ''?>">
                             <?=getTimeLeft($ad['expirationDate']);?>

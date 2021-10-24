@@ -1,5 +1,6 @@
 <?php
 require_once('helpers.php');
+require_once('functions.php');
 
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
@@ -50,21 +51,14 @@ $ads = [
     ],
 ];
 
-function formatAdPrice($price){
-    $formatedPrice = number_format(ceil($price), 0, ',', ' ');
-    return $formatedPrice . ' ₽';
+
+foreach ($ads as $ad){
+    $ad['price'] = formatAdPrice(htmlspecialchars($ad['price']));
+    $ad['timeLeft'] = getTimeLeft($ad['expirationDate']);
 };
 
-function getTimeLeft ($expirationDate)
-{
-    $timeNow = date_create(date("Y-m-d H:i")); //2021-10-23
-    $timeExpiration = date_create(/*$ads[0]['expirationDate']*/$expirationDate); //2021-11-25
-    $intervalHours = str_pad(+date_interval_format(date_diff($timeNow, $timeExpiration),
-            "%a") * 24 + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H"), 2, "0", STR_PAD_LEFT);
-    $intervalMinutes = str_pad(date_interval_format(date_diff($timeNow, $timeExpiration), "%i"), 2, "0", STR_PAD_LEFT);
-    $timeLeft = $intervalHours . ":" . $intervalMinutes;
-    return $timeLeft;
-}
+var_dump($ads[0]);
+var_dump(getTimeLeft($ads[0]['expirationDate']));
 
 $content = include_template('main.php', [
     'categories' => $categories,
