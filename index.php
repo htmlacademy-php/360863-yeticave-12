@@ -51,20 +51,23 @@ $ads = [
     ],
 ];
 
-
-foreach ($ads as $ad){
-    $ad['price'] = formatAdPrice(htmlspecialchars($ad['price']));
-    $ad['timeLeft'] = getTimeLeft($ad['expirationDate']);
+foreach ( $categories as $key => $category) {
+    $categories[$key] = htmlspecialchars($category);
 };
 
-var_dump($ads[0]);
-var_dump(getTimeLeft($ads[0]['expirationDate']));
+foreach ( $ads as $key => $ad) {
+    $ads[$key]['category'] = htmlspecialchars($ad['category']);
+    $ads[$key]['title'] = htmlspecialchars($ad['title']);
+    $ads[$key]['price'] = formatAdPrice(htmlspecialchars($ad['price']));
+    $ads[$key]['timeLeft'] = getTimeLeft($ad['expirationDate']);
+};
 
 $content = include_template('main.php', [
     'categories' => $categories,
     'ads' => $ads,
 
 ]);
+
 print include_template('layout.php', [
     'title' => $title,
     'is_auth' => $is_auth,

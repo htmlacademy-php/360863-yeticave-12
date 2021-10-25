@@ -1,6 +1,6 @@
 <?php
 
-function formatAdPrice(int $price):string
+function formatAdPrice(string $price):string
 {
     $formatedPrice = number_format(ceil($price), 0, ',', ' ');
     return $formatedPrice . ' ₽';
