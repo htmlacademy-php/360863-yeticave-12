@@ -1,6 +1,7 @@
 <?php
 require_once('helpers.php');
 require_once('functions.php');
+require_once('config.php');
 
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
