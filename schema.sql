@@ -42,9 +42,7 @@ CREATE TABLE IF NOT EXISTS person (
     email CHAR(63) NOT NULL UNIQUE,
     name CHAR(63) NOT NULL,
     password CHAR(63) NOT NULL,
-    contacts CHAR(63) NOT NULL,
-    lot_id INT,
-    bid_id INT
+    contacts CHAR(63) NOT NULL
 );
 
 ALTER TABLE lot
@@ -55,7 +53,3 @@ ALTER TABLE lot
 ALTER TABLE bid
     ADD (FOREIGN KEY (person_id) REFERENCES person(id) ON DELETE CASCADE,
     FOREIGN KEY (lot_id) REFERENCES lot(id) ON DELETE CASCADE);
-
-ALTER TABLE person
-    ADD (FOREIGN KEY (lot_id) REFERENCES lot(id) ON DELETE CASCADE,
-    FOREIGN KEY (bid_id) REFERENCES bid(id) ON DELETE CASCADE);
