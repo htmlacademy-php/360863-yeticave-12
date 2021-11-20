@@ -41,10 +41,10 @@ VALUES
 SELECT title FROM category;
 
 /*получить самые новые, открытые лоты. Каждый лот должен включать название, стартовую цену, ссылку на изображение, цену, название категории;*/
-SELECT lot.title, starting_price, img, category.title, MAX(bid.sum)
+SELECT lot.title as title, starting_price, img, category.title as category, MAX(bid.sum)
 FROM lot
-JOIN category ON category.id = lot.category_id
-LEFT JOIN bid ON lot.id = bid.lot_id
+         JOIN category ON category.id = lot.category_id
+         LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE completion_date > now()
 GROUP BY lot.title, starting_price, img, lot.date_created_at
 ORDER BY lot.date_created_at DESC;

@@ -2,12 +2,13 @@
 require_once('helpers.php');
 require_once('functions.php');
 require_once('config.php');
+require_once('data.php');
 
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
 $user_name = 'Леонид';
-$categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
-$ads = [
+/*$categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];*/
+/*$ads = [
     [
         'title' => '2014 Rossignol District Snowboard',
         'category' => 'Доски и лыжи',
@@ -50,23 +51,23 @@ $ads = [
         'imgUrl' => 'img/lot-6.jpg',
         'expirationDate' => '2021-11-19',
     ],
-];
+];*/
 
-foreach ( $categories as $key => $category) {
-    $categories[$key] = htmlspecialchars($category);
+foreach ($categories as $key => $category) {
+    $categories[$key]['title'] = htmlspecialchars($category['title']);
+    $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
 };
 
-foreach ( $ads as $key => $ad) {
+foreach ($ads as $key => $ad) {
     $ads[$key]['category'] = htmlspecialchars($ad['category']);
     $ads[$key]['title'] = htmlspecialchars($ad['title']);
-    $ads[$key]['price'] = formatAdPrice(htmlspecialchars($ad['price']));
-    $ads[$key]['timeLeft'] = getTimeLeft($ad['expirationDate']);
+    $ads[$key]['starting_price'] = formatAdPrice(htmlspecialchars($ad['starting_price']));
+    $ads[$key]['timeLeft'] = getTimeLeft($ad['completion_date']);
 };
 
 $content = include_template('main.php', [
     'categories' => $categories,
     'ads' => $ads,
-
 ]);
 
 print include_template('layout.php', [
