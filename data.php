@@ -7,8 +7,8 @@ if ($CONNECTION == false) {
     echo "ошибка подключения" . mysqli_connect_error();
 };
 
-
-function getAds ($link){
+function getAds ($link)
+{
     $sql_ads = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price
 FROM lot
          JOIN category ON category.id = lot.category_id

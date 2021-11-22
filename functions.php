@@ -21,7 +21,8 @@ function getTimeLeft (string $expirationDate):array
     return $timeLeft;
 }
 
-function getTimePassed ($dateCreate) {
+function getTimePassed (string $dateCreate):string
+{
     $timeNow = date_create(date("Y-m-d H:i"));
     $dateCreated = date_create($dateCreate);
     $timePassed = date_diff($dateCreated, $timeNow);
