@@ -5,20 +5,23 @@ require_once('config.php');
 require_once('data.php');
 require_once('helpers.php');
 
-
-if ($_GET['id']){
-    $lot = getLot($CONNECTION);
-}
-
 $categories = getCategories ($CONNECTION);
 foreach ($categories as $key => $category) {
     $categories[$key]['title'] = htmlspecialchars($category['title']);
     $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
 };
 
-if (!$_GET['id'] || $lot['lotId'] === null){
 
-$content = include_template('404.php');
+if (!$_GET['id']){
+    $content = include_template('404-error.php');
+    http_response_code(404);
+} else {
+    $lot = getLot($CONNECTION);
+}
+
+if ($lot['lotId'] === 0 || $lot['lotId'] === null){
+
+$content = include_template('404-error.php');
 http_response_code(404);
 
 } else  {
