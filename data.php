@@ -1,5 +1,8 @@
 <?php
 require_once('config.php');
+$is_auth = rand(0, 1);
+$title = 'Главная страница';
+$user_name = 'Леонид';
 
 $CONNECTION = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
 mysqli_set_charset($CONNECTION, "utf8");
@@ -47,7 +50,7 @@ function getCategories (object $link):array
 function getLot (object $link): ?array
 {
     try {
-        $sql_lot = "SELECT lot.id as lotId, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step
+        $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id

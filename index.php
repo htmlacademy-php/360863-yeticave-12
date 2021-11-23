@@ -4,10 +4,6 @@ require_once('functions.php');
 require_once('config.php');
 require_once('data.php');
 
-$is_auth = rand(0, 1);
-$title = 'Главная страница';
-$user_name = 'Леонид';
-
 $ads = getAds($CONNECTION);
 $categories = getCategories ($CONNECTION);
 

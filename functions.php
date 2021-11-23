@@ -37,8 +37,26 @@ function getTimePassed (string $dateCreate):string
         return $timePassed = 'Час назад';
     } else if ($days == 0 & $hours > 1){
         return $timePassed = $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
-    } else if ($days > 0){
+    } else {
         return $timePassed = date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
     }
+}
+function prepareData (array $array): array
+{
+    foreach ($array as $key => $value){
+        $value = htmlspecialchars($value);
+        switch ($key){
+            case 'bid_step' : $value = formatAdPrice(htmlspecialchars($value)); break;
+            case 'completion_date' : $array['timeLeft'] = getTimeLeft(htmlspecialchars($array['completion_date'])); break;
+            case 'current_price' : if (!empty($value)) {
+                $array['price'] =  formatAdPrice(htmlspecialchars($value), '');
+            } else {
+                $array['price'] = formatAdPrice(htmlspecialchars($array['starting_price']), '');
+            }
+                break;
+        }
+        $array[$key] = $value;
+    }
+    return $array;
 }
 

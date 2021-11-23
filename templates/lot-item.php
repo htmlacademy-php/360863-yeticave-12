@@ -38,7 +38,7 @@
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
                         <span class="lot-item__amount">Текущая цена</span>
-                        <span class="lot-item__cost"><?= $lotPrice; ?></span>
+                        <span class="lot-item__cost"><?= $lot['price']; ?></span>
                     </div>
                     <div class="lot-item__min-cost">
                         Мин. ставка <span><?=$lot['bid_step']; ?></span>

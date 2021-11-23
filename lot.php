@@ -19,23 +19,14 @@ if (!$_GET['id']){
     $lot = getLot($CONNECTION);
 }
 
-if ($lot['lotId'] === 0 || $lot['lotId'] === null){
+if (empty($lot['id'])){
 
 $content = include_template('404-error.php');
 http_response_code(404);
 
 } else  {
 
-$lot['title'] = htmlspecialchars($lot['title']);
-$lot['category'] = htmlspecialchars($lot['category']);
-$lot['description'] = htmlspecialchars($lot['description']);
-$lot['bid_step'] = formatAdPrice(htmlspecialchars($lot['bid_step']));
-$lot['timeLeft'] = getTimeLeft(htmlspecialchars($lot['completion_date']));
-if ($lot['current_price'] !== null) {
-    $lotPrice =  formatAdPrice(htmlspecialchars($lot['current_price']), '');
-} else {
-    $lotPrice = formatAdPrice(htmlspecialchars($lot['starting_price']), '');
-}
+$lot = prepareData($lot);
 
 $bids = getbids($CONNECTION);
 foreach ($bids as $key => $bid) {
@@ -47,13 +38,15 @@ foreach ($bids as $key => $bid) {
     $content = include_template('lot-item.php', [
     'categories' => $categories,
     'lot' => $lot,
-    'lotPrice' => $lotPrice,
     'bids' => $bids,
 ]);
 
 }
 
 print include_template('layout.php', [
+    'title' => $title,
+    'is_auth' => $is_auth,
+    'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
 ]);
