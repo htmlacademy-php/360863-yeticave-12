@@ -1,6 +1,6 @@
 <?php
 
 define('HOST', 'localhost');
-define('USER', 'userstudent');
-define('PASSWORD', 'student');
-define('DATABASE', 'dbstudent');
+define('USER', 'root');
+define('PASSWORD', '');
+define('DATABASE', 'yeticave');

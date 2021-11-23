@@ -1,7 +1,7 @@
 <?php
-require_once('database.php');
+require_once('config.php');
 
-$CONNECTION = mysqli_connect($dataBase['host'], $dataBase['userName'], $dataBase['password'], $dataBase['database']);
+$CONNECTION = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
 mysqli_set_charset($CONNECTION, "utf8");
 if ($CONNECTION == false) {
     echo "ошибка подключения" . ' ' . mysqli_connect_error();
