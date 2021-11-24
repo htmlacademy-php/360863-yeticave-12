@@ -37,6 +37,12 @@ VALUES
     (8100, 1, 3),
     (8200, 2, 3);
 
+INSERT INTO
+    bid(sum, person_id, lot_id)
+VALUES
+    (8400, 3, 3),
+    (8600, 1, 3);
+
 /*получить все категории*/
 SELECT title FROM category;
 
