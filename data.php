@@ -35,7 +35,7 @@ ORDER BY lot.date_created_at DESC";
 function getCategories (object $link):array
 {
     try {
-        $sql_categories = "SELECT title, symbolic_code FROM category";
+        $sql_categories = "SELECT id, title, symbolic_code FROM category";
         $object_result_categories = mysqli_query($link, $sql_categories);
         if (!$object_result_categories){
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
@@ -111,6 +111,47 @@ ORDER BY sum DESC";
         mysqli_stmt_execute($stmt_bids);
         $object_result_bids = mysqli_stmt_get_result($stmt_bids);
         return mysqli_fetch_all($object_result_bids, MYSQLI_ASSOC);
+    } catch (Error $error) {
+        print($error);
+        return [];
+    }
+}
+
+function insertLot (object $link): array
+{
+    try {
+        $file_name = $_FILES['lot-img']['name'];
+        $file_path = __DIR__ . '/uploads/';
+        $imgUrlPost = '/uploads/' . $file_name;
+
+        move_uploaded_file($_FILES['lot-img']['tmp_name'], $file_path . $file_name);
+
+        $titlePost = $_POST['lot-name'];
+        $authorID = 1;
+        $categoryId = $_POST['category'];
+        $descriptionPost = $_POST['message'];
+        $startingPricePost = $_POST['lot-rate'];
+        $bidStepPost = $_POST['lot-step'];
+        $completionDatePost = $_POST['lot-date'];
+
+        $sql_insert_lot = "INSERT INTO lot SET
+title = ?,
+author_id = ?,
+category_id = ?,
+description = ?,
+img = ?,
+starting_price = ?,
+bid_step = ?,
+completion_date = ?";
+
+        $stmt_insert_lot = mysqli_prepare($link, $sql_insert_lot);
+        if ($stmt_insert_lot === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt_insert_lot, 'ssssssss', $titlePost, $authorID, $categoryId, $descriptionPost, $imgUrlPost,
+            $startingPricePost, $bidStepPost, $completionDatePost);
+        mysqli_stmt_execute($stmt_insert_lot);
+        return [];
     } catch (Error $error) {
         print($error);
         return [];
