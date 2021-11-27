@@ -1,3 +1,4 @@
+<main>
 <nav class="nav">
     <ul class="nav__list container">
         <li class="nav__item">
@@ -73,3 +74,4 @@
     <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
     <button type="submit" name="send" class="button">Добавить лот</button>
 </form>
+</main>

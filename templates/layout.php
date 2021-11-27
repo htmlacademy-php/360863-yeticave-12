@@ -34,9 +34,8 @@
         </div>
     </header>
 
-    <main>
+
         <?=$content; ?>
-    </main>
 
 </div>
 

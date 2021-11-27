@@ -8,6 +8,7 @@ foreach ($categories as $key => $category) {
     $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
 };
 
+$requiredFields = ['lot-name', ];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fileName = $_FILES['lot-img']['name'];
     $imgUrlPost = '/uploads/' . $fileName;
