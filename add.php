@@ -8,7 +8,9 @@ foreach ($categories as $key => $category) {
     $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
 };
 
-$requiredFields = ['lot-name', ];
+$requiredFields = ['lot-name', 'category', 'message', 'lot-rate', 'lot-step', 'lot-date'];
+$errors = [];
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fileName = $_FILES['lot-img']['name'];
     $imgUrlPost = '/uploads/' . $fileName;
@@ -21,8 +23,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bidStepPost = $_POST['lot-step'] ?? '';
     $completionDatePost = $_POST['lot-date'] ?? '';
 
+
+
+    foreach ($requiredFields as $field){
+        if (empty($_POST[$field])){
+            switch ($field){
+                case 'lot-name' : $errors[$field] = 'Введите наименование лота'; break;
+                case 'message' : $errors[$field] = 'Напишите описание лота'; break;
+                case 'category' : $errors[$field] = 'Выберите категорию'; break;
+                case 'lot-rate' : $errors[$field] = 'Введите начальную цену'; break;
+                case 'lot-step' : $errors[$field] = 'Введите шаг ставки'; break;
+                case 'lot-date' : $errors[$field] = 'Введите дату завершения торгов'; break;
+            }
+        }
+    }
+    if ($_POST['category'] === 'Выберите категорию'){
+        $errors['category'] = 'Выберите категорию';
+    }
+    if ($_FILES['lot-img']["size"] === 0){
+        $errors['lot-img'] = 'Добавьте изображение для лота';
+    }
+
+    if ($_FILES['lot-img']["size"] > 0){
+
+if (count($errors) > 0){
     insertLot($CONNECTION);
     /*    header("Location: /index.php");*/
+}
+
+
 }
 
 
@@ -34,6 +63,7 @@ $content = include_template('add-lot.php', [
     'startingPricePost' => $startingPricePost,
     'bidStepPost' => $bidStepPost,
     'completionDatePost' => $completionDatePost,
+    'errors' => $errors,
 ]);
 
 print include_template('layout.php', [
