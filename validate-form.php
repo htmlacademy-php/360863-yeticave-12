@@ -1,6 +1,7 @@
 <?php
 
-function validateForm ($requiredFields){
+function validateForm (array $requiredFields): array
+{
     $errors = [];
     $fileName = $_FILES['lot-img']['name'];
     $filePath = __DIR__ . '/uploads/';
