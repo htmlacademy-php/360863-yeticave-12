@@ -60,3 +60,13 @@ function prepareData (array $array): array
     return $array;
 }
 
+function getValues (array $requiredFields): array
+{
+    $valuesLotForm = [];
+    foreach ($requiredFields as $field){
+        if (!empty($_POST[$field])){
+            $valuesLotForm[$field] = $_POST[$field];
+        }
+    }
+    return $valuesLotForm;
+}
