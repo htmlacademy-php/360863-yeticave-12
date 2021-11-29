@@ -17,7 +17,7 @@ function validateForm (array $requiredFields): array
                 case 'lot-rate' : $errors[$field] = 'Введите начальную цену'; break;
                 case 'lot-step' : $errors[$field] = 'Введите шаг ставки'; break;
                 case 'lot-date' : $errors[$field] = 'Введите дату завершения торгов'; break;
-                default: $errors[$field] = 'Заполните поле';
+                /*default: $errors[$field] = 'Заполните поле';*/
             }
         }
     }
@@ -54,11 +54,11 @@ function validateForm (array $requiredFields): array
 //валидация поля Дата
     if (!empty($_POST['lot-date'])){
 
-        $date = $_POST['lot-date'];
-        $array = explode("-",$date);
-        $year = (int)$array[0];
-        $month = (int)$array[1];
-        $day = (int)$array[2];
+        $date = htmlspecialchars($_POST['lot-date']);
+        $dateExplodeArray = explode("-",$date);
+        $year = (int)$dateExplodeArray[0];
+        $month = (int)$dateExplodeArray[1];
+        $day = (int)$dateExplodeArray[2];
         if(!checkdate($month, $day, $year))
         {
             $errors['lot-date'] = "Дата должна быть в формате «ГГГГ-ММ-ДД»";

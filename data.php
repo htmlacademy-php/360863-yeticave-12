@@ -126,13 +126,13 @@ function insertLot (object $link): array
 
         move_uploaded_file($_FILES['lot-img']['tmp_name'], $file_path . $file_name);
 
-        $titlePost = $_POST['lot-name'];
+        $titlePost = htmlspecialchars($_POST['lot-name']);
         $authorID = 1;
-        $categoryId = $_POST['category'];
-        $descriptionPost = $_POST['message'];
-        $startingPricePost = $_POST['lot-rate'];
-        $bidStepPost = $_POST['lot-step'];
-        $completionDatePost = $_POST['lot-date'];
+        $categoryId = htmlspecialchars($_POST['category']);
+        $descriptionPost = htmlspecialchars($_POST['message']);
+        $startingPricePost = htmlspecialchars($_POST['lot-rate']);
+        $bidStepPost = htmlspecialchars($_POST['lot-step']);
+        $completionDatePost = htmlspecialchars($_POST['lot-date']);
 
         $sql_insert_lot = "INSERT INTO lot SET
 title = ?,

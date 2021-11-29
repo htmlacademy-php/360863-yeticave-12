@@ -54,7 +54,7 @@
     <div class="form__item form__item--file <?=$errors['lot-img'] ? 'form__item--invalid' : ''?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" name="lot-img" id="lot-img" value="">
+            <input class="visually-hidden" type="file" name="lot-img" id="lot-img" value="<?=$valuesLotForm['lot-img']; ?>">
             <label for="lot-img">
                 Добавить
             </label>

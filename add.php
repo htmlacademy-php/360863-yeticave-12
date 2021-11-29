@@ -11,13 +11,16 @@ foreach ($categories as $key => $category) {
     $categories[$key]['isSelected'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
 };
 
-$requiredFields = ['lot-name', 'category', 'message', 'lot-rate', 'lot-step', 'lot-date'];
+$requiredFields = ['lot-name', 'category', 'message', 'lot-img', 'lot-rate', 'lot-step', 'lot-date'];
 $errors = [];
 $valuesLotForm = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $valuesLotForm = getValues ($requiredFields);
     $errors = validateForm($requiredFields);
+    var_dump($_POST); print_r('<br>');
+    var_dump($_FILES); print_r('<br>');
+    var_dump($valuesLotForm['lot-img']); print_r('<br>');
 if (count($errors) === 0){
     insertLot($CONNECTION);
     foreach ($valuesLotForm as $key => $value){
@@ -26,7 +29,7 @@ if (count($errors) === 0){
     foreach ($categories as $key => $category) {
         $categories[$key]['isSelected'] = '';
     };
-        header("Location: /index.php");
+        /*header("Location: /index.php");*/
 }
 }
 
