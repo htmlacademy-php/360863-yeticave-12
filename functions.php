@@ -75,6 +75,7 @@ function getValues (array $requiredFields): array
         $fileName = $_FILES['lot-img']['name'];
         $filePath = __DIR__ . '/uploads/';
         $imgUrlPost = $filePath . $fileName;
+        move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
         switch ($field){
             case 'lot-img':
                 $valuesLotForm['lot-img'] = $imgUrlPost;

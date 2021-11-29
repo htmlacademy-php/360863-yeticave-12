@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var_dump($_POST); print_r('<br>');
     var_dump($_FILES); print_r('<br>');
     var_dump($valuesLotForm['lot-img']); print_r('<br>');
+
 if (count($errors) === 0){
     insertLot($CONNECTION);
     foreach ($valuesLotForm as $key => $value){
