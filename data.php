@@ -126,6 +126,9 @@ function insertLot (object $link): array
 
         move_uploaded_file($_FILES['lot-img']['tmp_name'], $file_path . $file_name);
 
+        if ($_FILES['lot-img']['size'] === 0){
+            $imgUrlPost = $_POST['img'];
+        }
         $titlePost = htmlspecialchars($_POST['lot-name']);
         $authorID = 1;
         $categoryId = htmlspecialchars($_POST['category']);

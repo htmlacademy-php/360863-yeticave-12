@@ -26,8 +26,8 @@
     <div class="form__container-two">
         <div class="form__item <?=$errors['lot-name'] ? 'form__item--invalid' : ''?>"> <!-- form__item--invalid -->
             <label for="lot-name">Наименование <sup>*</sup></label>
-            <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?=$valuesLotForm['lot-name']; ?>">
-            <?php if($errors['lot-name']): ?>
+            <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?=$nameValue; ?>">
+            <?php if(array_key_exists('lot-name', $errors)): ?>
             <span class="form__error"><?=$errors['lot-name']; ?></span>
             <?php endif; ?>
         </div>
@@ -39,27 +39,28 @@
                     <option value="<?=$category['id']; ?>" <?=$category['isSelected']; ?>><?=$category['title']; ?></option>
                 <?php endforeach;?>
             </select>
-            <?php if($errors['category']): ?>
+            <?php if(array_key_exists('category', $errors)): ?>
                 <span class="form__error"><?=$errors['category']; ?></span>
             <?php endif; ?>
         </div>
     </div>
     <div class="form__item form__item--wide <?=$errors['message'] ? 'form__item--invalid' : ''?>">
         <label for="message">Описание <sup>*</sup></label>
-        <textarea id="message" name="message" placeholder="Напишите описание лота"><?=$valuesLotForm['message']; ?></textarea>
-        <?php if($errors['message']): ?>
+        <textarea id="message" name="message" placeholder="Напишите описание лота"><?=$messageValue; ?></textarea>
+        <?php if(array_key_exists('message', $errors)): ?>
             <span class="form__error"><?=$errors['message']; ?></span>
         <?php endif; ?>
     </div>
     <div class="form__item form__item--file <?=$errors['lot-img'] ? 'form__item--invalid' : ''?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" name="lot-img" id="lot-img" value="<?=$valuesLotForm['lot-img']; ?>">
+            <input class="visually-hidden" type="file" name="lot-img"id="lot-img" value="">
+            <input type="hidden" name="img" value="<?=$imgValue; ?>" />
             <label for="lot-img">
                 Добавить
             </label>
         </div>
-        <?php if($errors['lot-img']): ?>
+        <?php if(array_key_exists('lot-img', $errors)): ?>
             <span class="form__error"><?=$errors['lot-img']; ?></span>
         <?php endif; ?>
     </div>
@@ -67,24 +68,24 @@
     <div class="form__container-three">
         <div class="form__item form__item--small <?=$errors['lot-rate'] ? 'form__item--invalid' : ''?>">
             <label for="lot-rate">Начальная цена <sup>*</sup></label>
-            <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?=$valuesLotForm['lot-rate']; ?>">
-            <?php if($errors['lot-rate']): ?>
+            <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?=$rateValue; ?>">
+            <?php if(array_key_exists('lot-rate', $errors)): ?>
                 <span class="form__error"><?=$errors['lot-rate']; ?></span>
             <?php endif; ?>
 
         </div>
         <div class="form__item form__item--small <?=$errors['lot-step'] ? 'form__item--invalid' : ''?>">
             <label for="lot-step">Шаг ставки <sup>*</sup></label>
-            <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?=$valuesLotForm['lot-step']; ?>">
-            <?php if($errors['lot-step']): ?>
+            <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?=$stepValue; ?>">
+            <?php if(array_key_exists('lot-step', $errors)): ?>
                 <span class="form__error"><?=$errors['lot-step']; ?></span>
             <?php endif; ?>
 
         </div>
         <div class="form__item <?=$errors['lot-date'] ? 'form__item--invalid' : ''?>">
             <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
-            <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?=$valuesLotForm['lot-date']; ?>">
-            <?php if($errors['lot-date']): ?>
+            <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?=$dateValue; ?>">
+            <?php if(array_key_exists('lot-date', $errors)): ?>
                 <span class="form__error"><?=$errors['lot-date']; ?></span>
             <?php endif; ?>
 

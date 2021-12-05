@@ -17,8 +17,7 @@ function validateForm (array $requiredFields): array
                 case 'lot-rate' : $errors[$field] = 'Введите начальную цену'; break;
                 case 'lot-step' : $errors[$field] = 'Введите шаг ставки'; break;
                 case 'lot-date' : $errors[$field] = 'Введите дату завершения торгов'; break;
-                /*default: $errors[$field] = 'Заполните поле';*/
-            }
+                }
         }
     }
 
@@ -27,12 +26,13 @@ function validateForm (array $requiredFields): array
         $errors['category'] = 'Выберите категорию';
     }
 //валидация поля Изображение
-    if ($_FILES['lot-img']["size"] === 0){
-        $errors['lot-img'] = 'Добавьте изображение для лота';
-    } else {
-        if (!in_array(mime_content_type($imgUrlPost), $acceptableImageMime)){
+    if ($_FILES['lot-img']["size"] > 0) {
+        if (!in_array(mime_content_type($imgUrlPost), $acceptableImageMime)) {
             $errors['lot-img'] = 'Формат изображения может быть только: jpeg, jpg или png';
         }
+    }
+    if ($_FILES['lot-img']["size"] === 0 && empty($_POST['img'])){
+        $errors['lot-img'] = 'Добавьте изображение для лота';
     }
 
 //валидация поля Начальная цена

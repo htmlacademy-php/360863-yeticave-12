@@ -64,23 +64,3 @@ function prepareData (array $data): array
     }
     return $data;
 }
-
-function getValues (array $requiredFields): array
-{
-    $valuesLotForm = [];
-    foreach ($requiredFields as $field){
-        if (!empty($_POST[$field])){
-            $valuesLotForm[$field] = htmlspecialchars($_POST[$field]);
-        }
-        $fileName = $_FILES['lot-img']['name'];
-        $filePath = __DIR__ . '/uploads/';
-        $imgUrlPost = $filePath . $fileName;
-        move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
-        switch ($field){
-            case 'lot-img':
-                $valuesLotForm['lot-img'] = $imgUrlPost;
-                break;
-        }
-    }
-    return $valuesLotForm;
-}
