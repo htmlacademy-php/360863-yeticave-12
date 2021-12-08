@@ -41,22 +41,26 @@ function getTimePassed (string $dateCreate):string
         return $timePassed = date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
     }
 }
-function prepareData (array $array): array
+function prepareData (array $data): array
 {
-    foreach ($array as $key => $value){
+    foreach ($data as $key => $value){
         $value = htmlspecialchars($value);
         switch ($key){
-            case 'bid_step' : $value = formatAdPrice(htmlspecialchars($value)); break;
-            case 'completion_date' : $array['timeLeft'] = getTimeLeft(htmlspecialchars($array['completion_date'])); break;
-            case 'current_price' : if (!empty($value)) {
-                $array['price'] =  formatAdPrice(htmlspecialchars($value), '');
+            case 'bid_step':
+                $value = formatAdPrice(htmlspecialchars($value));
+                break;
+            case 'completion_date':
+                $data['timeLeft'] = getTimeLeft(htmlspecialchars($data['completion_date']));
+                break;
+            case 'current_price':
+                if (!empty($value)) {
+                    $data['price'] =  formatAdPrice(htmlspecialchars($value), '');
             } else {
-                $array['price'] = formatAdPrice(htmlspecialchars($array['starting_price']), '');
+                    $data['price'] = formatAdPrice(htmlspecialchars($data['starting_price']), '');
             }
                 break;
         }
-        $array[$key] = $value;
+        $data[$key] = $value;
     }
-    return $array;
+    return $data;
 }
-
