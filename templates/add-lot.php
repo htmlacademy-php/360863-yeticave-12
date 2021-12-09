@@ -27,7 +27,7 @@
         <div class="form__item <?=$errors['lot-name'] ? 'form__item--invalid' : ''?>"> <!-- form__item--invalid -->
             <label for="lot-name">Наименование <sup>*</sup></label>
             <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?=$nameValue; ?>">
-            <?php if(array_key_exists('lot-name', $errors)): ?>
+            <?php if(!empty($errors['lot-name'])): ?>
             <span class="form__error"><?=$errors['lot-name']; ?></span>
             <?php endif; ?>
         </div>
@@ -39,7 +39,7 @@
                     <option value="<?=$category['id']; ?>" <?=$category['isSelected']; ?>><?=$category['title']; ?></option>
                 <?php endforeach;?>
             </select>
-            <?php if(array_key_exists('category', $errors)): ?>
+            <?php if(!empty($errors['category'])): ?>
                 <span class="form__error"><?=$errors['category']; ?></span>
             <?php endif; ?>
         </div>
@@ -47,7 +47,7 @@
     <div class="form__item form__item--wide <?=$errors['message'] ? 'form__item--invalid' : ''?>">
         <label for="message">Описание <sup>*</sup></label>
         <textarea id="message" name="message" placeholder="Напишите описание лота"><?=$messageValue; ?></textarea>
-        <?php if(array_key_exists('message', $errors)): ?>
+        <?php if(!empty($errors['message'])): ?>
             <span class="form__error"><?=$errors['message']; ?></span>
         <?php endif; ?>
     </div>
@@ -60,7 +60,7 @@
                 Добавить
             </label>
         </div>
-        <?php if(array_key_exists('lot-img', $errors)): ?>
+        <?php if(!empty($errors['lot-img'])): ?>
             <span class="form__error"><?=$errors['lot-img']; ?></span>
         <?php endif; ?>
     </div>
@@ -69,7 +69,7 @@
         <div class="form__item form__item--small <?=$errors['lot-rate'] ? 'form__item--invalid' : ''?>">
             <label for="lot-rate">Начальная цена <sup>*</sup></label>
             <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?=$rateValue; ?>">
-            <?php if(array_key_exists('lot-rate', $errors)): ?>
+            <?php if(!empty($errors['lot-rate'])): ?>
                 <span class="form__error"><?=$errors['lot-rate']; ?></span>
             <?php endif; ?>
 
@@ -77,7 +77,7 @@
         <div class="form__item form__item--small <?=$errors['lot-step'] ? 'form__item--invalid' : ''?>">
             <label for="lot-step">Шаг ставки <sup>*</sup></label>
             <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?=$stepValue; ?>">
-            <?php if(array_key_exists('lot-step', $errors)): ?>
+            <?php if(!empty($errors['lot-step'])): ?>
                 <span class="form__error"><?=$errors['lot-step']; ?></span>
             <?php endif; ?>
 
@@ -85,7 +85,7 @@
         <div class="form__item <?=$errors['lot-date'] ? 'form__item--invalid' : ''?>">
             <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
             <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?=$dateValue; ?>">
-            <?php if(array_key_exists('lot-date', $errors)): ?>
+            <?php if(!empty($errors['lot-date'])): ?>
                 <span class="form__error"><?=$errors['lot-date']; ?></span>
             <?php endif; ?>
 
