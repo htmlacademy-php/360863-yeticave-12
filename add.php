@@ -22,7 +22,7 @@ foreach ($categories as $key => $category) {
         $categories[$key]['isSelected'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
     }
 
-};
+}
 
 $requiredFields = [
     'lot-name',
@@ -60,8 +60,8 @@ if (count($errors) === 0){
 
     foreach ($categories as $key => $category) {
         $categories[$key]['isSelected'] = '';
-    };
-        header("Location: /index.php");
+    }
+    header("Location: /index.php");
 }
 }
 
