@@ -9,56 +9,39 @@ require_once('config.php');
  * @var int $user_name - переменная имя пользователя
  * @var int $is_auth - переменная принимает рандомно значения 1 или 0
  * @var string $title - переменная title страницы
- * @var array $categories - список категорий
+ * @var array $categories - массив для вывода категорий
  */
 
-
 $requiredFields = [
-    'lot-name',
-    'category',
+    'email',
+    'password',
+    'name',
     'message',
-    'lot-rate',
-    'lot-step',
-    'lot-date',
-    ];
-$errors = [];
+];
 $safeData = [];
-$imgValue = '';
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $safeData = getSafeData($_POST, $CONNECTION);
-
-
-    if ($_FILES['lot-img']['size'] > 0) {
-        $fileName = $_FILES['lot-img']['name'];
-        $filePath = __DIR__ . '/uploads/';
-        $imgUrlPost = $filePath . $fileName;
-        move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
-        $imgValue = $filePath . $fileName;
-    }
-
     $errors = validateForm($requiredFields);
 
-if (count($errors) === 0){
-    insertLot($CONNECTION, $safeData);
-    $imgValue = '';
-
-    foreach ($safeData as $key => $value) {
-        $safeData[$key] = '';
+    $isEmailCompare = compareEmail($CONNECTION, $_POST['email']);
+    if ($isEmailCompare){
+        $errors['email'] = 'пользователь с таким именем уже зарегистрирован';
     }
 
-    foreach ($categories as $key => $category) {
-        $categories[$key]['isSelected'] = '';
-    }
-    header("Location: /index.php");
-}
-}
+    if (count($errors) === 0){
+        insertPerson($CONNECTION, $safeData);
 
-$content = include_template('add-lot.php', [
-    'categories' => $categories,
+        foreach ($safeData as $key => $value) {
+            $safeData[$key] = '';
+        }
+        header("Location: /login.php");
+    }
+}
+$content = include_template('sign-up.php', [
     'errors' => $errors,
     'safeData' => $safeData,
-    'imgValue' => $imgValue,
 ]);
 
 print include_template('layout.php', [

@@ -10,6 +10,19 @@ if ($CONNECTION == false) {
     echo "ошибка подключения" . ' ' . mysqli_connect_error();
 };
 
+$categories = getCategories ($CONNECTION);
+foreach ($categories as $key => $category){
+    $categories[$key]['isSelected'] = '';
+}
+foreach ($categories as $key => $category) {
+    $categories[$key]['title'] = htmlspecialchars($category['title']);
+    $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
+    if (!empty($_POST['category'])){
+        $categories[$key]['isSelected'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
+    }
+
+}
+
 function getAds (object $link):array
 {
     try {
@@ -32,7 +45,7 @@ ORDER BY lot.date_created_at DESC";
     }
 }
 
-function getCategories (object $link):array
+function getCategories (mysqli $link):array
 {
     try {
         $sql_categories = "SELECT id, title, symbolic_code FROM category";
@@ -148,6 +161,29 @@ completion_date = ?";
         mysqli_stmt_bind_param($stmt_insert_lot, 'ssssssss', $safeData['lot-name'], $authorID, $safeData['category'], $safeData['message'], $imgUrlPost,
             $safeData['lot-rate'], $safeData['lot-step'], $safeData['lot-date']);
         mysqli_stmt_execute($stmt_insert_lot);
+        return [];
+    } catch (Error $error) {
+        print($error);
+        return [];
+    }
+}
+
+function insertPerson (mysqli $link, array $safeData): array
+{
+    try {
+         $safeData['password'] = password_hash($safeData['password'], PASSWORD_BCRYPT);
+         $sql_insert_person = "INSERT INTO person SET
+email = ?,
+name = ?,
+password = ?,
+contacts = ?";
+
+        $stmt_insert_person = mysqli_prepare($link, $sql_insert_person);
+        if ($stmt_insert_person === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt_insert_person, 'ssss', $safeData['email'], $safeData['name'], $safeData['password'], $safeData['message']);
+        mysqli_stmt_execute($stmt_insert_person);
         return [];
     } catch (Error $error) {
         print($error);
