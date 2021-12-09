@@ -3,12 +3,13 @@ require_once('helpers.php');
 require_once('data.php');
 require_once('functions.php');
 require_once('validate-form.php');
+require_once('config.php');
 
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
-
+/* @var mysqli $CONNECTION - ссылка для соединения с базой данных
+ * @var int $user_name - переменная имя пользователя
+ * @var int $is_auth - переменная принимает рандомно значения 1 или 0
+ * @var string $title - переменная title страницы
+ */
 
 $categories = getCategories ($CONNECTION);
 foreach ($categories as $key => $category){
