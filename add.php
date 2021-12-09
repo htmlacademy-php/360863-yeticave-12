@@ -33,16 +33,9 @@ $requiredFields = [
     ];
 $errors = [];
 $safeData = [];
-$nameValue = '';
-$categoryValue = '';
-$messageValue = '';
 $imgValue = '';
-$rateValue = '';
-$stepValue = '';
-$dateValue = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    var_dump($_POST);
     $safeData = getSafeData($_POST, $CONNECTION);
 
 
@@ -58,17 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if (count($errors) === 0){
     insertLot($CONNECTION, $safeData);
-    $nameValue = '';
-    $categoryValue = '';
-    $messageValue = '';
     $imgValue = '';
-    $rateValue = '';
-    $stepValue = '';
-    $dateValue = '';
+
+    foreach ($safeData as $key => $value) {
+        $safeData[$key] = '';
+    }
+
     foreach ($categories as $key => $category) {
         $categories[$key]['isSelected'] = '';
     };
-        /*header("Location: /index.php");*/
+        header("Location: /index.php");
 }
 }
 
