@@ -43,7 +43,8 @@ $dateValue = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var_dump($_POST);
-    $safeData = getSafeData($_POST);
+    $safeData = getSafeData($_POST, $CONNECTION);
+
 
     if ($_FILES['lot-img']['size'] > 0) {
         $fileName = $_FILES['lot-img']['name'];

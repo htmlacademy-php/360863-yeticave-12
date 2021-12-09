@@ -129,8 +129,9 @@ function insertLot (object $link): array
         if ($_FILES['lot-img']['size'] === 0){
             $imgUrlPost = $_POST['img'];
         }
-        $titlePost = htmlspecialchars($_POST['lot-name']);
         $authorID = 1;
+
+        $titlePost = htmlspecialchars($_POST['lot-name']);
         $categoryId = htmlspecialchars($_POST['category']);
         $descriptionPost = htmlspecialchars($_POST['message']);
         $startingPricePost = htmlspecialchars($_POST['lot-rate']);
