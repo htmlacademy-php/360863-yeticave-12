@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = validateForm($requiredFields);
 
 if (count($errors) === 0){
-    insertLot($CONNECTION);
+    insertLot($CONNECTION, $safeData);
     $nameValue = '';
     $categoryValue = '';
     $messageValue = '';

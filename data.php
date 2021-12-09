@@ -117,7 +117,7 @@ ORDER BY sum DESC";
     }
 }
 
-function insertLot (object $link): array
+function insertLot (mysqli $link, array $safeData): array
 {
     try {
         $file_name = $_FILES['lot-img']['name'];
@@ -130,13 +130,6 @@ function insertLot (object $link): array
             $imgUrlPost = $_POST['img'];
         }
         $authorID = 1;
-
-        $titlePost = htmlspecialchars($_POST['lot-name']);
-        $categoryId = htmlspecialchars($_POST['category']);
-        $descriptionPost = htmlspecialchars($_POST['message']);
-        $startingPricePost = htmlspecialchars($_POST['lot-rate']);
-        $bidStepPost = htmlspecialchars($_POST['lot-step']);
-        $completionDatePost = htmlspecialchars($_POST['lot-date']);
 
         $sql_insert_lot = "INSERT INTO lot SET
 title = ?,
@@ -152,8 +145,8 @@ completion_date = ?";
         if ($stmt_insert_lot === false) {
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        mysqli_stmt_bind_param($stmt_insert_lot, 'ssssssss', $titlePost, $authorID, $categoryId, $descriptionPost, $imgUrlPost,
-            $startingPricePost, $bidStepPost, $completionDatePost);
+        mysqli_stmt_bind_param($stmt_insert_lot, 'ssssssss', $safeData['lot-name'], $authorID, $safeData['category'], $safeData['message'], $imgUrlPost,
+            $safeData['lot-rate'], $safeData['lot-step'], $safeData['lot-date']);
         mysqli_stmt_execute($stmt_insert_lot);
         return [];
     } catch (Error $error) {
