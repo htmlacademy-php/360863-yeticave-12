@@ -37,16 +37,14 @@ function validateForm (array $requiredFields): array
 
 //валидация поля Начальная цена
     if (!empty($_POST['lot-rate']) || $_POST['lot-rate'] === '0') {
-        preg_match("@^([1-9][0-9]*)$@", $_POST['lot-rate'], $price_match);
-        if(!$price_match[0]){
+        if ((filter_var($_POST['lot-rate'], FILTER_VALIDATE_INT, ) === false) || (int)$_POST['lot-rate'] <= 0) {
             $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
         }
     }
 
 //валидация поля Шаг ставки
     if (!empty($_POST['lot-step']) || $_POST['lot-step'] === '0') {
-        preg_match("@^([1-9][0-9]*)$@", $_POST['lot-step'], $price_match);
-        if(!$price_match[0]){
+        if ((filter_var($_POST['lot-step'], FILTER_VALIDATE_INT, ) === false) || (int)$_POST['lot-step'] <= 0) {
             $errors['lot-step'] = 'Шаг ставки должен быть числом больше нуля';
         }
     }
