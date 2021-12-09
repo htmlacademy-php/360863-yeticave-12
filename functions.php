@@ -64,3 +64,13 @@ function prepareData (array $data): array
     }
     return $data;
 }
+
+function getSafeData (array $data): array
+{
+    $safeData = [];
+    foreach ($data as $key => $value) {
+        $safeData[$key] = htmlspecialchars($value);
+    }
+
+    return $safeData;
+}

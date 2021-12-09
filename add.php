@@ -32,7 +32,7 @@ $requiredFields = [
     'lot-date',
     ];
 $errors = [];
-
+$safeData = [];
 $nameValue = '';
 $categoryValue = '';
 $messageValue = '';
@@ -42,24 +42,9 @@ $stepValue = '';
 $dateValue = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!empty($_POST['lot-name'])) {
-        $nameValue = $_POST['lot-name'];
-    }
-    if (!empty($_POST['category'])) {
-        $categoryValue = htmlspecialchars($_POST['category']);
-    }
-    if (!empty($_POST['message'])) {
-        $messageValue = htmlspecialchars($_POST['message']);
-    }
-    if (!empty($_POST['lot-rate'])) {
-        $rateValue = htmlspecialchars($_POST['lot-rate']);
-    }
-    if (!empty($_POST['lot-step'])) {
-        $stepValue = htmlspecialchars($_POST['lot-step']);
-    }
-    if (!empty($_POST['lot-date'])) {
-        $dateValue = htmlspecialchars($_POST['lot-date']);
-    }
+    var_dump($_POST);
+    $safeData = getSafeData($_POST);
+
     if ($_FILES['lot-img']['size'] > 0) {
         $fileName = $_FILES['lot-img']['name'];
         $filePath = __DIR__ . '/uploads/';
@@ -89,14 +74,8 @@ if (count($errors) === 0){
 $content = include_template('add-lot.php', [
     'categories' => $categories,
     'errors' => $errors,
-    'nameValue' => $nameValue,
-    'categoryValue' => $categoryValue,
-    'messageValue' => $messageValue,
+    'safeData' => $safeData,
     'imgValue' => $imgValue,
-    'rateValue' => $rateValue,
-    'stepValue' => $stepValue,
-    'dateValue' => $dateValue,
-
 ]);
 
 print include_template('layout.php', [
