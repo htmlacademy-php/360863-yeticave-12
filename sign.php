@@ -23,19 +23,16 @@ $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $safeData = getSafeData($_POST, $CONNECTION);
-    $errors = validateForm($requiredFields);
+    $errors = validateForm($requiredFields, $safeData);
 
-    $isEmailCompare = compareEmail($CONNECTION, $_POST['email']);
+    $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
     if ($isEmailCompare){
-        $errors['email'] = 'пользователь с таким именем уже зарегистрирован';
+        $errors['email'] = 'пользователь с таким email уже зарегистрирован';
     }
 
-    if (count($errors) === 0){
+    if (empty($errors)){
         insertPerson($CONNECTION, $safeData);
-
-        foreach ($safeData as $key => $value) {
-            $safeData[$key] = '';
-        }
+        $safeData = [];
         header("Location: /login.php");
     }
 }

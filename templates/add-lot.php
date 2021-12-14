@@ -36,7 +36,7 @@
             <select id="category" name="category">
                 <option>Выберите категорию</option>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?=$category['id']; ?>" <?=$category['isSelected']; ?>><?=$category['title']; ?></option>
+                    <option value="<?=$category['id']; ?>" <?=$category['sectionClass']; ?>><?=$category['title']; ?></option>
                 <?php endforeach;?>
             </select>
             <?php if(!empty($errors['category'])): ?>

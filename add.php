@@ -37,19 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $imgValue = $filePath . $fileName;
     }
 
-    $errors = validateForm($requiredFields);
+    $errors = validateForm($requiredFields, $safeData);
 
-if (count($errors) === 0){
+if (empty($errors)){
     insertLot($CONNECTION, $safeData);
     $imgValue = '';
+    $safeData = [];
+    $categories = [];
 
-    foreach ($safeData as $key => $value) {
-        $safeData[$key] = '';
-    }
-
-    foreach ($categories as $key => $category) {
-        $categories[$key]['isSelected'] = '';
-    }
     header("Location: /index.php");
 }
 }

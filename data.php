@@ -12,13 +12,13 @@ if ($CONNECTION == false) {
 
 $categories = getCategories ($CONNECTION);
 foreach ($categories as $key => $category){
-    $categories[$key]['isSelected'] = '';
+    $categories[$key]['sectionClass'] = '';
 }
 foreach ($categories as $key => $category) {
     $categories[$key]['title'] = htmlspecialchars($category['title']);
     $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
     if (!empty($_POST['category'])){
-        $categories[$key]['isSelected'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
+        $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
     }
 
 }
@@ -133,12 +133,13 @@ ORDER BY sum DESC";
 function insertLot (mysqli $link, array $safeData): array
 {
     try {
+        if(!empty($_FILES)){
         $file_name = $_FILES['lot-img']['name'];
         $file_path = __DIR__ . '/uploads/';
         $imgUrlPost = '/uploads/' . $file_name;
 
         move_uploaded_file($_FILES['lot-img']['tmp_name'], $file_path . $file_name);
-
+        }
         if ($_FILES['lot-img']['size'] === 0){
             $imgUrlPost = $_POST['img'];
         }
@@ -154,11 +155,13 @@ starting_price = ?,
 bid_step = ?,
 completion_date = ?";
 
+        $safeData['lot-rate'] = mysqli_real_escape_string($link, $safeData['lot-rate']);
+        $safeData['lot-step'] = mysqli_real_escape_string($link, $safeData['lot-step']);
         $stmt_insert_lot = mysqli_prepare($link, $sql_insert_lot);
         if ($stmt_insert_lot === false) {
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        mysqli_stmt_bind_param($stmt_insert_lot, 'ssssssss', $safeData['lot-name'], $authorID, $safeData['category'], $safeData['message'], $imgUrlPost,
+        mysqli_stmt_bind_param($stmt_insert_lot, 'sssssiis', $safeData['lot-name'], $authorID, $safeData['category'], $safeData['message'], $imgUrlPost,
             $safeData['lot-rate'], $safeData['lot-step'], $safeData['lot-date']);
         mysqli_stmt_execute($stmt_insert_lot);
         return [];
