@@ -5,6 +5,12 @@ require_once('config.php');
 require_once('data.php');
 require_once('helpers.php');
 
+/* @var mysqli $CONNECTION - ссылка для соединения с базой данных
+ * @var int $user_name - переменная имя пользователя
+ * @var string $title - переменная title страницы
+ * @var array $categories - массив для вывода категорий
+ */
+
 if (!$_GET['id']){
     $content = include_template('404-error.php');
     http_response_code(404);
@@ -38,7 +44,6 @@ foreach ($bids as $key => $bid) {
 
 print include_template('layout.php', [
     'title' => $title,
-    'is_auth' => $is_auth,
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,

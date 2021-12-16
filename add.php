@@ -7,12 +7,11 @@ require_once('config.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
  * @var int $user_name - переменная имя пользователя
- * @var int $is_auth - переменная принимает рандомно значения 1 или 0
  * @var string $title - переменная title страницы
  * @var array $categories - список категорий
  */
 
-
+if (isset($_SESSION['user'])) {
 $requiredFields = [
     'lot-name',
     'category',
@@ -58,8 +57,11 @@ $content = include_template('add-lot.php', [
 
 print include_template('layout.php', [
     'title' => $title,
-    'is_auth' => $is_auth,
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
 ]);
+} else {
+    http_response_code(403);
+
+}

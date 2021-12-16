@@ -19,7 +19,7 @@ function validateForm (array $requiredFields, array $safeData): array
                 case 'lot-step' : $errors[$field] = 'Введите шаг ставки'; break;
                 case 'lot-date' : $errors[$field] = 'Введите дату завершения торгов'; break;
                 case 'email' : $errors[$field] = 'Введите ваш email'; break;
-                case 'password' : $errors[$field] = 'Придумайте пароль'; break;
+                case 'password' : $errors[$field] = 'Заполните поле пароль'; break;
                 case 'name' : $errors[$field] = 'Введите ваше имя'; break;
                 }
         }
@@ -92,7 +92,7 @@ function validateForm (array $requiredFields, array $safeData): array
 function compareEmail  (mysqli $link, string $email): bool
 {
     try {
-        $sql_email = "SELECT email FROM person WHERE email= '$email'";
+        $sql_email = "SELECT * FROM person WHERE email= '$email'";
         $object_result_email = mysqli_query($link, $sql_email);
         $foundEmail = mysqli_fetch_assoc($object_result_email);
         if (!empty($foundEmail)){
@@ -106,4 +106,15 @@ function compareEmail  (mysqli $link, string $email): bool
         print($error);
         return false;
     }
+}
+
+function comparePassword (mysqli $link, string $email, string $password) : bool
+{
+    $sql_email = "SELECT * FROM person WHERE email = '$email'";
+    $object_result_email = mysqli_query($link, $sql_email);
+    $user = $object_result_email ? mysqli_fetch_assoc($object_result_email) : null;
+    if ($user){
+        return password_verify($password, $user['password']);
+    }
+    return false;
 }

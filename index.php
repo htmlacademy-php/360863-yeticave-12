@@ -4,6 +4,12 @@ require_once('functions.php');
 require_once('config.php');
 require_once('data.php');
 
+/* @var mysqli $CONNECTION - ссылка для соединения с базой данных
+ * @var int $user_name - переменная имя пользователя
+ * @var string $title - переменная title страницы
+ * @var array $categories - массив для вывода категорий
+ */
+
 $ads = getAds($CONNECTION);
 
 foreach ($ads as $key => $ad) {
@@ -20,7 +26,6 @@ $content = include_template('main.php', [
 
 print include_template('layout.php', [
     'title' => $title,
-    'is_auth' => $is_auth,
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
