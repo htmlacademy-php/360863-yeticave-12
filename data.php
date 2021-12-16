@@ -143,7 +143,7 @@ function insertLot (mysqli $link, array $safeData): array
         if ($_FILES['lot-img']['size'] === 0){
             $imgUrlPost = $_POST['img'];
         }
-        $authorID = 1;
+        $authorID = $_SESSION['user']['id'];
 
         $sql_insert_lot = "INSERT INTO lot SET
 title = ?,
@@ -155,8 +155,8 @@ starting_price = ?,
 bid_step = ?,
 completion_date = ?";
 
-        $safeData['lot-rate'] = mysqli_real_escape_string($link, $safeData['lot-rate']);
-        $safeData['lot-step'] = mysqli_real_escape_string($link, $safeData['lot-step']);
+        $safeData['lot-rate'] = mysqli_real_escape_string($link, (int) $safeData['lot-rate']);
+        $safeData['lot-step'] = mysqli_real_escape_string($link, (int) $safeData['lot-step']);
         $stmt_insert_lot = mysqli_prepare($link, $sql_insert_lot);
         if ($stmt_insert_lot === false) {
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
@@ -192,4 +192,11 @@ contacts = ?";
         print($error);
         return [];
     }
+}
+
+function getPersonData (mysqli $link, string $email): array
+{
+    $sql_email = "SELECT * FROM person WHERE email = '$email'";
+    $object_result_email = mysqli_query($link, $sql_email);
+    return mysqli_fetch_assoc($object_result_email);
 }

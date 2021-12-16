@@ -69,7 +69,7 @@ function getSafeData (array $data, mysqli $link): array
 {
     $safeData = [];
     foreach ($data as $key => $value) {
-        $safeData[$key] = mysqli_real_escape_string($link, $value);
+        $safeData[$key] = htmlspecialchars($value);
         }
 
     return $safeData;
