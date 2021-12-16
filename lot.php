@@ -5,13 +5,6 @@ require_once('config.php');
 require_once('data.php');
 require_once('helpers.php');
 
-$categories = getCategories ($CONNECTION);
-foreach ($categories as $key => $category) {
-    $categories[$key]['title'] = htmlspecialchars($category['title']);
-    $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
-};
-
-
 if (!$_GET['id']){
     $content = include_template('404-error.php');
     http_response_code(404);

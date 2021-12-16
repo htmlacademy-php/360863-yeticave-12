@@ -5,12 +5,6 @@ require_once('config.php');
 require_once('data.php');
 
 $ads = getAds($CONNECTION);
-$categories = getCategories ($CONNECTION);
-
-foreach ($categories as $key => $category) {
-    $categories[$key]['title'] = htmlspecialchars($category['title']);
-    $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
-};
 
 foreach ($ads as $key => $ad) {
     $ads[$key]['category'] = htmlspecialchars($ad['category']);
