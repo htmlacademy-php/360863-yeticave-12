@@ -2,7 +2,11 @@
 require_once('config.php');
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
-$user_name = 'Леонид';
+$user_name = null;
+if (isset($_SESSION['user']['name'])){
+    $user_name = $_SESSION['user']['name'];
+}
+
 
 $CONNECTION = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
 mysqli_set_charset($CONNECTION, "utf8");
@@ -199,4 +203,27 @@ function getPersonData (mysqli $link, string $email): array
     $sql_email = "SELECT * FROM person WHERE email = '$email'";
     $object_result_email = mysqli_query($link, $sql_email);
     return mysqli_fetch_assoc($object_result_email);
+}
+
+
+function getSearchAds (mysqli $link, string $searchWord):array
+{
+    try {
+        $sql_search = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price
+FROM lot
+JOIN category ON category.id = lot.category_id
+LEFT JOIN bid ON lot.id = bid.lot_id
+WHERE MATCH (lot.title, lot.description) AGAINST('$searchWord')
+GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
+ORDER BY lot.date_created_at DESC";
+
+        $object_result_search = mysqli_query($link, $sql_search);
+        if (!$object_result_search) {
+            throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
+        }
+        return mysqli_fetch_all($object_result_search, MYSQLI_ASSOC);
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
 }

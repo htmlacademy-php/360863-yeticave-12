@@ -11,7 +11,7 @@ require_once('helpers.php');
  * @var array $categories - массив для вывода категорий
  */
 
-if (!$_GET['id']){
+if (empty($_GET['id'])){
     $content = include_template('404-error.php');
     http_response_code(404);
 } else {
