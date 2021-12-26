@@ -10,6 +10,7 @@ require_once('functions.php');
  * @var int $is_auth - переменная принимает рандомно значения 1 или 0
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
+ * @var string $searchWord - Поисковой запрос
  */
 
 
@@ -21,7 +22,7 @@ $safeData = [];
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $safeData = getSafeData($_POST, $CONNECTION);
+    $safeData = getSafeData($_POST);
     $errors = validateForm($requiredFields, $safeData);
 
     if (empty($errors)){
@@ -35,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user'] = getPersonData($CONNECTION, $safeData['email']);
             header("Location: /index.php");
             $safeData = [];
-            var_dump($_SESSION['user']);
         } else {
             $errors['password'] = 'Вы ввели неверный пароль';
         }
@@ -53,4 +53,5 @@ print include_template('layout.php', [
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
+    'searchWord' => $searchWord,
 ]);

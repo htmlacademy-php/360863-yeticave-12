@@ -8,23 +8,47 @@ require_once('data.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
+* @var string $searchWord - Поисковой запрос
  */
 
-if (empty($_GET['search'])) {
+if (empty($_GET['search']) ) {
     $content = include_template('404-error.php');
     http_response_code(404);
 } else {
     $safeDataSearch = trim(htmlspecialchars($_GET['search']));
-    $searchAds = getSearchAds($CONNECTION, $safeDataSearch);
 
-    foreach ($searchAds as $searchAd) {
-        $searchAd['starting_price'] = formatAdPrice($searchAd['starting_price']);
-        var_dump($searchAd['starting_price']);
-        $searchAd['timeLeft'] = getTimeLeft($searchAd['completion_date']);
+    $cur_page = $_GET['page'] ?? 1;
+    $page_items = 9;
+
+    $allAdsResult = getSearchAdsForPage($CONNECTION, $safeDataSearch);
+    $items_count = count($allAdsResult);
+
+    $pages_count = ceil($items_count / $page_items);
+    $offset = ($cur_page - 1) * $page_items;;
+    $pages = range(1, $pages_count);
+
+    if ($cur_page == $pages_count) {
+        $isLastPageExist = false;
+    } else {
+        $isLastPageExist = true;
     }
 
-print_r('<br>');
-var_dump($searchAds);
+    if ($cur_page == 1) {
+        $isFirstPageExist = false;
+    } else {
+        $isFirstPageExist = true;
+    }
+
+
+    $searchAds = getSearchAds($CONNECTION, $safeDataSearch, $page_items, $offset);
+
+    foreach ($searchAds as $key => $searchAd) {
+        $searchAds[$key]['starting_price'] = formatAdPrice($searchAd['starting_price']);
+        if(isset($searchAds[$key]['current_price'])){
+            $searchAds[$key]['current_price'] = formatAdPrice($searchAd['current_price']);
+        }
+        $searchAds[$key]['timeLeft'] = getTimeLeft($searchAd['completion_date']);
+    }
 
     if(empty($searchAds)) {
         $searchResult = 'Ничего не найдено по вашему запросу';
@@ -33,13 +57,22 @@ var_dump($searchAds);
     }
 
 
+    if (isset($_GET['page']) && $_GET['page'] > $pages_count){
+        $content = include_template('404-error.php');
+        http_response_code(404);
+    } else {
+        $content = include_template('search-tmp.php', [
+            'safeDataSearch' => $safeDataSearch,
+            'searchResult' => $searchResult,
+            'searchAds' => $searchAds,
+            'pages_count' => $pages_count,
+            'pages' => $pages,
+            'cur_page' => $cur_page,
+            'isFirstPageExist' => $isFirstPageExist,
+            'isLastPageExist' => $isLastPageExist,
+        ]);
+    }
 
-
-    $content = include_template('search-tmp.php', [
-        'safeDataSearch' => $safeDataSearch,
-        'searchResult' => $searchResult,
-        'searchAds' => $searchAds,
-    ]);
 }
 
 print include_template('layout.php', [
@@ -47,6 +80,7 @@ print include_template('layout.php', [
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
+    'searchWord' => $searchWord,
 
 ]);
 

@@ -6,7 +6,8 @@ function formatAdPrice(string $price, string $currency = ' ₽'):string
     return $formatedPrice . $currency;
 };
 
-function getTimeLeft (string $expirationDate):array
+
+function getTimeLeft (string $expirationDate): array
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $timeExpiration = date_create($expirationDate);
@@ -30,15 +31,15 @@ function getTimePassed (string $dateCreate):string
     $hours = $timePassed -> format('%h');
     $minutes = $timePassed -> format('%i');
     if ($days == 0 & $hours == 0 & $minutes == 0 ){
-        return $timePassed = 'меньше минуты назад';
+        return 'меньше минуты назад';
     } else if ($days == 0 & $hours == 0 & $minutes > 0){
-        return $timePassed = $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
+        return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
     } else if ($days == 0 & $hours == 1){
-        return $timePassed = 'Час назад';
+        return 'Час назад';
     } else if ($days == 0 & $hours > 1){
-        return $timePassed = $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
+        return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
     } else {
-        return $timePassed = date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
+        return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
     }
 }
 function prepareData (array $data): array
@@ -65,7 +66,7 @@ function prepareData (array $data): array
     return $data;
 }
 
-function getSafeData (array $data, mysqli $link): array
+function getSafeData (array $data): array
 {
     $safeData = [];
     foreach ($data as $key => $value) {

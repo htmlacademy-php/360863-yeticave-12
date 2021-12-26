@@ -9,6 +9,7 @@ require_once('config.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - список категорий
+ * @var string $searchWord - Поисковой запрос
  */
 
 if (isset($_SESSION['user'])) {
@@ -25,7 +26,7 @@ $safeData = [];
 $imgValue = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $safeData = getSafeData($_POST, $CONNECTION);
+    $safeData = getSafeData($_POST);
 
 
     if ($_FILES['lot-img']['size'] > 0) {
@@ -60,6 +61,7 @@ print include_template('layout.php', [
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
+    'searchWord' => $searchWord,
 ]);
 } else {
     http_response_code(403);

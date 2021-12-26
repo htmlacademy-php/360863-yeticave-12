@@ -2,6 +2,13 @@
 require_once('helpers.php');
 require_once('data.php');
 
+/* @var mysqli $CONNECTION - ссылка для соединения с базой данных
+ * @var int $user_name - переменная имя пользователя
+ * @var string $title - переменная title страницы
+ * @var array $categories - массив для вывода категорий
+ * @var string $searchWord - Поисковой запрос
+ */
+
 $categories = getCategories ($CONNECTION);
 foreach ($categories as $key => $category) {
     $categories[$key]['title'] = htmlspecialchars($category['title']);
@@ -14,4 +21,9 @@ $content = include_template('404-error.php', [
 print include_template('layout.php', [
     'content' => $content,
     'categories' => $categories,
+    'searchWord' => $searchWord,
 ]);
+
+
+
+
