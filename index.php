@@ -8,7 +8,6 @@ require_once('data.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
- * @var string $searchWord - Поисковой запрос
  */
 
 $ads = getAds($CONNECTION);
@@ -30,7 +29,6 @@ print include_template('layout.php', [
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
-    'searchWord' => $searchWord,
 ]);
 
 

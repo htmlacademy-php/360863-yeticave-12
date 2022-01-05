@@ -211,44 +211,54 @@ function getPersonData (mysqli $link, string $email): array
 }
 
 
-function getSearchAds (mysqli $link, string $searchWord, $page_items, $offset):array
+
+function  getSearchAds(mysqli $link, string $searchWord):array
 {
     try {
         $sql_search = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
-WHERE MATCH (lot.title, lot.description) AGAINST('$searchWord')
+WHERE MATCH (lot.title, lot.description) AGAINST(?)
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC LIMIT {$page_items} OFFSET {$offset}";
+ORDER BY lot.date_created_at DESC";
 
-        $object_result_search = mysqli_query($link, $sql_search);
-        if (!$object_result_search) {
-            throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        return mysqli_fetch_all($object_result_search, MYSQLI_ASSOC);
+        mysqli_stmt_bind_param($stmt, 's', $searchWord);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+
     } catch (Error $error){
         print($error);
         return [];
     }
 }
 
-function getSearchAdsForPage (mysqli $link, string $searchWord):array
+function getSearchAdsForPage(mysqli $link, string $searchWord, $page_items, $offset):array
 {
     try {
         $sql_search = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
-WHERE MATCH (lot.title, lot.description) AGAINST('$searchWord')
+WHERE MATCH (lot.title, lot.description) AGAINST(?)
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC";
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
 
-        $object_result_search = mysqli_query($link, $sql_search);
-        if (!$object_result_search) {
-            throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        return mysqli_fetch_all($object_result_search, MYSQLI_ASSOC);
+        mysqli_stmt_bind_param($stmt, 'sii', $searchWord, $page_items, $offset);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
     } catch (Error $error){
         print($error);
         return [];

@@ -6,7 +6,6 @@ require_once('data.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
- * @var string $searchWord - Поисковой запрос
  */
 
 $categories = getCategories ($CONNECTION);
@@ -21,7 +20,6 @@ $content = include_template('404-error.php', [
 print include_template('layout.php', [
     'content' => $content,
     'categories' => $categories,
-    'searchWord' => $searchWord,
 ]);
 
 

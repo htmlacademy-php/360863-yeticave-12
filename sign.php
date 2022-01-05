@@ -9,7 +9,6 @@ require_once('config.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
- * @var string $searchWord - Поисковой запрос
  */
 if (isset($_SESSION['user'])){
     http_response_code(403);
@@ -48,6 +47,5 @@ print include_template('layout.php', [
     'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
-    'searchWord' => $searchWord,
 ]);
 }

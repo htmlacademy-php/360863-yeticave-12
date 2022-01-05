@@ -17,14 +17,19 @@ if (empty($_GET['search']) ) {
 } else {
     $safeDataSearch = trim(htmlspecialchars($_GET['search']));
 
-    $cur_page = $_GET['page'] ?? 1;
+    if(isset($_GET['page'])){
+        $cur_page = (int) htmlspecialchars($_GET['page']);
+    } else {
+        $cur_page = 1;
+    }
     $page_items = 9;
 
-    $allAdsResult = getSearchAdsForPage($CONNECTION, $safeDataSearch);
+    $allAdsResult = getSearchAds($CONNECTION, $safeDataSearch);
+
     $items_count = count($allAdsResult);
 
     $pages_count = ceil($items_count / $page_items);
-    $offset = ($cur_page - 1) * $page_items;;
+    $offset = ($cur_page - 1) * $page_items;
     $pages = range(1, $pages_count);
 
     if ($cur_page == $pages_count) {
@@ -40,7 +45,7 @@ if (empty($_GET['search']) ) {
     }
 
 
-    $searchAds = getSearchAds($CONNECTION, $safeDataSearch, $page_items, $offset);
+    $searchAds = getSearchAdsForPage($CONNECTION, $safeDataSearch, $page_items, $offset);
 
     foreach ($searchAds as $key => $searchAd) {
         $searchAds[$key]['starting_price'] = formatAdPrice($searchAd['starting_price']);
