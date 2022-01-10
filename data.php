@@ -239,6 +239,7 @@ ORDER BY lot.date_created_at DESC";
     }
 }
 
+
 function getSearchAdsForPage(mysqli $link, string $searchWord, $page_items, $offset):array
 {
     try {
