@@ -243,13 +243,13 @@ ORDER BY lot.date_created_at DESC";
 function getSearchAdsForPage(mysqli $link, string $searchWord, $page_items, $offset):array
 {
     try {
-        $sql_search = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+        $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE MATCH (lot.title, lot.description) AGAINST(?)
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
+ORDER BY lot.id ASC LIMIT ? OFFSET ?";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {

@@ -10,15 +10,15 @@ require_once('data.php');
  * @var array $categories - массив для вывода категорий
 * @var string $searchWord - Поисковой запрос
  */
-
-if (empty($_GET['search']) ) {
+$safeData = getSafeData($_REQUEST);
+if (empty($safeData['search']) ) {
     $content = include_template('404-error.php');
     http_response_code(404);
 } else {
-    $safeDataSearch = trim(htmlspecialchars($_GET['search']));
+    $safeDataSearch = trim($safeData['search']);
 
-    if(isset($_GET['page'])){
-        $cur_page = (int) htmlspecialchars($_GET['page']);
+    if(isset($safeData['page'])){
+        $cur_page = (int) $safeData['page'];
     } else {
         $cur_page = 1;
     }
@@ -43,7 +43,6 @@ if (empty($_GET['search']) ) {
     } else {
         $isFirstPageExist = true;
     }
-
 
     $searchAds = getSearchAdsForPage($CONNECTION, $safeDataSearch, $page_items, $offset);
 
