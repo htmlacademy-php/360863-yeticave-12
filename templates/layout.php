@@ -39,8 +39,7 @@
         </div>
     </header>
 
-
-        <?=$content; ?>
+    <?=$content; ?>
 
 </div>
 
@@ -49,7 +48,7 @@
         <ul class="nav__list container">
             <?php foreach ($categories as $category): ?>
                 <li class="nav__item">
-                    <a href="pages/all-lots.html"><?=htmlspecialchars($category['title']); ?></a>
+                    <a href="/category.php?category=<?=$category['symbolic_code']; ?>"><?=htmlspecialchars($category['title']); ?></a>
                 </li>
             <?php endforeach; ?>
         </ul>

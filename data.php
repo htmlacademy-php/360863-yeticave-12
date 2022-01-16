@@ -1,5 +1,6 @@
 <?php
 require_once('config.php');
+require_once('functions.php');
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
 $user_name = null;
@@ -24,8 +25,7 @@ foreach ($categories as $key => $category){
     $categories[$key]['sectionClass'] = '';
 }
 foreach ($categories as $key => $category) {
-    $categories[$key]['title'] = htmlspecialchars($category['title']);
-    $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
+    $categories[$key] = getSafeData($category);
     if (!empty($_POST['category'])){
         $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
     }
@@ -57,7 +57,7 @@ ORDER BY lot.date_created_at DESC";
 function getCategories (mysqli $link):array
 {
     try {
-        $sql_categories = "SELECT id, title, symbolic_code FROM category";
+        $sql_categories = "SELECT * FROM category";
         $object_result_categories = mysqli_query($link, $sql_categories);
         if (!$object_result_categories){
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
@@ -256,6 +256,82 @@ ORDER BY lot.id ASC LIMIT ? OFFSET ?";
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
         mysqli_stmt_bind_param($stmt, 'sii', $searchWord, $page_items, $offset);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getCategory(mysqli $link, string $categoryId):array
+{
+    try {
+        $sql_search = "SELECT *
+FROM category
+WHERE category.symbolic_code = ?";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 's', $categoryId);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($object_result);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getCategoryAds(mysqli $link, string $category):array
+{
+    try {
+        $sql_search = "SELECT lot.id as lotId, lot.title as title, category.symbolic_code, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+FROM lot
+JOIN category ON category.id = lot.category_id
+LEFT JOIN bid ON lot.id = bid.lot_id
+WHERE category.symbolic_code = ?
+GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
+ORDER BY lot.date_created_at DESC";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 's', $category);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+
+function getCategoryAdsForPage(mysqli $link, string $category, $page_items, $offset):array
+{
+    try {
+        $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+FROM lot
+JOIN category ON category.id = lot.category_id
+LEFT JOIN bid ON lot.id = bid.lot_id
+WHERE category.symbolic_code = ?
+GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'sii', $category, $page_items, $offset);
         mysqli_stmt_execute($stmt);
         $object_result = mysqli_stmt_get_result($stmt);
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);

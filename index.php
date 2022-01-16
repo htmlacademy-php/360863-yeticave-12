@@ -13,10 +13,9 @@ require_once('data.php');
 $ads = getAds($CONNECTION);
 
 foreach ($ads as $key => $ad) {
-    $ads[$key]['category'] = htmlspecialchars($ad['category']);
-    $ads[$key]['title'] = htmlspecialchars($ad['title']);
-    $ads[$key]['starting_price'] = formatAdPrice(htmlspecialchars($ad['starting_price']));
-    $ads[$key]['timeLeft'] = getTimeLeft(htmlspecialchars($ad['completion_date']));
+    $ads[$key] = getSafeData($ad);
+    $ads[$key]['starting_price'] = formatAdPrice($ad['starting_price']);
+    $ads[$key]['timeLeft'] = getTimeLeft($ad['completion_date']);
 };
 
 $content = include_template('main.php', [

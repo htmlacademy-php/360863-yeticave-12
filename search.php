@@ -61,11 +61,14 @@ if (empty($safeData['search']) ) {
     }
 
 
-    if (isset($_GET['page']) && $_GET['page'] > $pages_count){
-        $content = include_template('404-error.php');
+    if (isset($safeData['page']) && $safeData['page'] > $pages_count){
+        $content = include_template('404-error.php', [
+            'categories' => $categories,
+        ]);
         http_response_code(404);
     } else {
         $content = include_template('search-tmp.php', [
+            'categories' => $categories,
             'safeDataSearch' => $safeDataSearch,
             'searchResult' => $searchResult,
             'searchAds' => $searchAds,

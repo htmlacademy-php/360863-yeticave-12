@@ -44,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $content = include_template('login-temp.php', [
     'errors' => $errors,
     'safeData' => $safeData,
+    'categories' => $categories,
+
 ]);
 
 print include_template('layout.php', [

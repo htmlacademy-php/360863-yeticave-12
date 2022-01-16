@@ -11,7 +11,8 @@ require_once('helpers.php');
  * @var array $categories - массив для вывода категорий
  */
 
-if (empty($_GET['id'])){
+$safeData = getSafeData($_REQUEST);
+if (empty($safeData['id'])){
     $content = include_template('404-error.php');
     http_response_code(404);
 } else {
@@ -20,7 +21,9 @@ if (empty($_GET['id'])){
 
 if (empty($lot['id'])){
 
-$content = include_template('404-error.php');
+$content = include_template('404-error.php', [
+    'categories' => $categories,
+]);
 http_response_code(404);
 
 } else  {
@@ -28,8 +31,9 @@ http_response_code(404);
 $lot = prepareData($lot);
 
 $bids = getbids($CONNECTION);
+
 foreach ($bids as $key => $bid) {
-    $bids[$key]['name'] = htmlspecialchars($bid['name']);
+    $bids[$key] = getSafeData($bid);
     $bids[$key]['sum'] = formatAdPrice(htmlspecialchars($bid['sum']));
     $bids[$key]['time_passed'] =  getTimePassed($bid['date_created_at']);
 };
