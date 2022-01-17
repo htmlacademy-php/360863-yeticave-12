@@ -21,9 +21,9 @@ if(isset($safeData['page'])){
     $cur_page = 1;
 }
 $page_items = 9;
-$categoryAllAds = getCategoryAds($CONNECTION, $safeData['category']);
-$items_count = count($categoryAllAds);
-if (count($categoryAllAds) == 0){
+$allCategoryAds = getCategoryAdsCount($CONNECTION, $safeData['category']);
+$items_count = $allCategoryAds['count'];
+if ($items_count == 0){
     $pageH2 = 'Лоты в категории "' .$category['title'] . '" не найдены';
 } else {
     $pageH2 = 'Все лоты в категории "'.$category['title'] . '"';
@@ -67,6 +67,7 @@ foreach ($categoryAds as $key => $categoryAd) {
         'isFirstPageExist' => $isFirstPageExist,
         'isLastPageExist' => $isLastPageExist,
         'pageH2' => $pageH2,
+        'safeData' => $safeData,
     ]);
 
 

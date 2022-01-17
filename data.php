@@ -212,16 +212,12 @@ function getPersonData (mysqli $link, string $email): array
 
 
 
-function  getSearchAds(mysqli $link, string $searchWord):array
+function getSearchAdsCount(mysqli $link, string $searchWord):array
 {
     try {
-        $sql_search = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+        $sql_search = "SELECT COUNT(*) AS count
 FROM lot
-JOIN category ON category.id = lot.category_id
-LEFT JOIN bid ON lot.id = bid.lot_id
-WHERE MATCH (lot.title, lot.description) AGAINST(?)
-GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC";
+WHERE MATCH (lot.title, lot.description) AGAINST(?)";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {
@@ -230,7 +226,7 @@ ORDER BY lot.date_created_at DESC";
         mysqli_stmt_bind_param($stmt, 's', $searchWord);
         mysqli_stmt_execute($stmt);
         $object_result = mysqli_stmt_get_result($stmt);
-        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+        return mysqli_fetch_assoc($object_result);
 
 
     } catch (Error $error){
@@ -249,7 +245,7 @@ JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE MATCH (lot.title, lot.description) AGAINST(?)
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.id ASC LIMIT ? OFFSET ?";
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {
@@ -288,16 +284,13 @@ WHERE category.symbolic_code = ?";
     }
 }
 
-function getCategoryAds(mysqli $link, string $category):array
+function getCategoryAdsCount(mysqli $link, string $category):array
 {
     try {
-        $sql_search = "SELECT lot.id as lotId, lot.title as title, category.symbolic_code, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+        $sql_search = "SELECT COUNT(*) AS count
 FROM lot
 JOIN category ON category.id = lot.category_id
-LEFT JOIN bid ON lot.id = bid.lot_id
-WHERE category.symbolic_code = ?
-GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC";
+WHERE category.symbolic_code = ?";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {
@@ -306,7 +299,7 @@ ORDER BY lot.date_created_at DESC";
         mysqli_stmt_bind_param($stmt, 's', $category);
         mysqli_stmt_execute($stmt);
         $object_result = mysqli_stmt_get_result($stmt);
-        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+        return mysqli_fetch_assoc($object_result);
 
 
     } catch (Error $error){

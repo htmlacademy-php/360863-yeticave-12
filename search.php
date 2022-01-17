@@ -24,9 +24,8 @@ if (empty($safeData['search']) ) {
     }
     $page_items = 9;
 
-    $allAdsResult = getSearchAds($CONNECTION, $safeDataSearch);
-
-    $items_count = count($allAdsResult);
+    $allAdsResult = getSearchAdsCount($CONNECTION, $safeDataSearch);
+    $items_count = $allAdsResult['count'];
 
     $pages_count = ceil($items_count / $page_items);
     $offset = ($cur_page - 1) * $page_items;

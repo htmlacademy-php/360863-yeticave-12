@@ -4,7 +4,7 @@
         <ul class="nav__list container">
             <?php foreach ($categories as $category): ?>
                 <li class="nav__item">
-                    <a href="/category.php?category=<?=$category['symbolic_code']; ?>"><?=htmlspecialchars($category['title']); ?></a>
+                    <a href="/category.php?category=<?=$category['symbolic_code']; ?>"><?=$category['title']; ?></a>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -45,15 +45,15 @@
 
                 <ul class="pagination-list">
                     <?php if ($isFirstPageExist): ?>
-                    <li class="pagination-item pagination-item-prev"><a href="/category.php?page=<?=($cur_page - 1) ;?>&category=<?=$category['symbolic_code']; ?>">Назад</a></li>
+                    <li class="pagination-item pagination-item-prev"><a href="/category.php?page=<?=($cur_page - 1) ;?>&category=<?=$safeData['category']; ?>">Назад</a></li>
                     <?php endif; ?>
                     <?php foreach ($pages as $page): ?>
                         <li class="pagination-item <?php if ($page == $cur_page): ?>pagination__item--active<?php endif; ?>">
-                            <a href="/category.php?page=<?=$page;?>&category=<?=$category['symbolic_code']; ?>"><?=$page;?></a>
+                            <a href="/category.php?page=<?=$page;?>&category=<?=$safeData['category']; ?>"><?=$page;?></a>
                         </li>
                     <?php endforeach; ?>
                     <?php if ($isLastPageExist): ?>
-                    <li class="pagination-item pagination-item-next"><a href="/category.php?page=<?=($cur_page + 1) ;?>&category=<?=$category['symbolic_code']; ?>">Вперед</a></li>
+                    <li class="pagination-item pagination-item-next"><a href="/category.php?page=<?=($cur_page + 1) ;?>&category=<?=$safeData['category']; ?>">Вперед</a></li>
                     <?php endif; ?>
                 </ul>
 
