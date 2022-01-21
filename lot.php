@@ -47,7 +47,7 @@ if (isset($_SESSION['user'])) {
         $errors = validateCost($requiredFields, $safeData, $lotPrice, $bidStep);
 
         if (empty($errors)){
-            insertBid($CONNECTION, $safeData['cost'], $_SESSION['user']['id'], $lot['id']);
+            insertBid($CONNECTION, $safeData['cost'], (int)$_SESSION['user']['id'], (int)$lot['id']);
             $safeData = [];
 
             header("Location: /lot.php?id=" . $lot['id']);
