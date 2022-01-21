@@ -72,7 +72,7 @@ function getCategories (mysqli $link):array
 function getLot (object $link): array
 {
     try {
-        $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step
+        $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step, author_id as authorId
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
@@ -330,6 +330,27 @@ ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
     } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function insertBid (mysqli $link, int $sum, int $personId, int $lotId): array
+{
+    try {
+        $sql_insert_bid = "INSERT INTO bid SET
+sum = ?,
+person_id = ?,
+lot_id = ?";
+
+        $stmt_insert_bid = mysqli_prepare($link, $sql_insert_bid);
+        if ($stmt_insert_bid === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt_insert_bid, 'iii', $sum, $personId, $lotId);
+        mysqli_stmt_execute($stmt_insert_bid);
+        return [];
+    } catch (Error $error) {
         print($error);
         return [];
     }

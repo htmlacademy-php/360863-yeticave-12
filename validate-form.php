@@ -21,6 +21,7 @@ function validateForm (array $requiredFields, array $safeData): array
                 case 'email' : $errors[$field] = 'Введите ваш email'; break;
                 case 'password' : $errors[$field] = 'Заполните поле пароль'; break;
                 case 'name' : $errors[$field] = 'Введите ваше имя'; break;
+                case 'cost' : $errors[$field] = 'Заполните ставку'; break;
                 }
         }
     }
@@ -86,6 +87,29 @@ function validateForm (array $requiredFields, array $safeData): array
     }
 
 
+
+    return $errors;
+}
+
+function validateCost (array $requiredFields, array $safeData, int $lotPrice, int $bidStep): array
+{
+    $errors = [];
+    foreach ($requiredFields as $field){
+        if (empty($safeData[$field]) && $safeData[$field] !== '0'){
+            switch ($field){
+                case 'cost' : $errors[$field] = 'Заполните ставку'; break;
+            }
+        }
+    }
+
+    // валидация поля cost
+    if(!empty($safeData['cost'])){
+        if ($safeData['cost'] !== '0') {
+            if ((filter_var($safeData['cost'], FILTER_VALIDATE_INT, ) === false) || (int)$safeData['cost'] <= 0 || (int)$safeData['cost'] < ($lotPrice + $bidStep)) {
+                $errors['cost'] = 'Ставка должна быть больше или равно, чем текущая цена лота + шаг ставки.';
+            }
+        }
+    }
     return $errors;
 }
 
