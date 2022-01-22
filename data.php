@@ -297,7 +297,7 @@ function getCategoryAdsCount(mysqli $link, string $category):array
         $sql_search = "SELECT COUNT(*) AS count
 FROM lot
 JOIN category ON category.id = lot.category_id
-WHERE category.symbolic_code = ?";
+WHERE category.symbolic_code = ? AND lot.completion_date > now()";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {
@@ -323,7 +323,7 @@ function getCategoryAdsForPage(mysqli $link, string $category, $page_items, $off
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
-WHERE category.symbolic_code = ?
+WHERE category.symbolic_code = ? AND lot.completion_date > now()
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
 ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
 

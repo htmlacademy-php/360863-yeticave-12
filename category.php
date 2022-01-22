@@ -61,7 +61,7 @@ foreach ($categoryAds as $key => $categoryAd) {
     }
 
 }
-//var_dump($categoryAds[0]);
+
     $content = include_template('category-tmp.php', [
         'categories' => $categories,
         'category' => $category,
