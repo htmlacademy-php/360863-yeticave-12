@@ -8,7 +8,6 @@ require_once('data.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
- * @var array $safeUserData - данные юзера
  */
 
 $ads = getAds($CONNECTION);

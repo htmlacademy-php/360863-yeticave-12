@@ -54,8 +54,14 @@ foreach ($categoryAds as $key => $categoryAd) {
         $categoryAds[$key]['current_price'] = formatAdPrice($categoryAd['current_price']);
     }
     $categoryAds[$key]['timeLeft'] = getTimeLeft($categoryAd['completion_date']);
-}
+    if (strtotime($categoryAds[$key]['completion_date']) <= strtotime('now')){
+        $categoryAds[$key]['timerText'] = 'торги окончены';
+    } else {
+        $categoryAds[$key]['timerText'] = $categoryAds[$key]['timeLeft']["hoursLeft"] . ':' . $categoryAds[$key]['timeLeft']["minutesLeft"];
+    }
 
+}
+//var_dump($categoryAds[0]);
     $content = include_template('category-tmp.php', [
         'categories' => $categories,
         'category' => $category,

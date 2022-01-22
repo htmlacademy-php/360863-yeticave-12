@@ -32,6 +32,12 @@ http_response_code(404);
 
 $lot = prepareData($lot);
 
+if (isset($user_name) && strtotime($lot['completion_date'])<=strtotime('now')){
+    $isTakeBidsVisible = false;
+} else {
+    $isTakeBidsVisible = true;
+}
+
 $bids = getbids($CONNECTION);
 $errors = [];
 $lotPrice = (int)str_replace(' ', '', $lot['price']);
@@ -70,6 +76,7 @@ foreach ($bids as $key => $bid) {
     'user_name' => $user_name,
     'errors' => $errors,
     'safeData' => $safeData,
+    'isTakeBidsVisible' => $isTakeBidsVisible
 ]);
 
 }

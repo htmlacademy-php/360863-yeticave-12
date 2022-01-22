@@ -33,7 +33,8 @@
                                     <?php endif; ?>
                                 </div>
                                 <div class="lot__timer timer <?= ($categoryAd['timeLeft']["hoursLeft"] === '00') ? 'timer--finishing': ''; ?>">
-                                    <?=$categoryAd['timeLeft']["hoursLeft"] . ':' . $categoryAd['timeLeft']["minutesLeft"];?>
+                                    <?=$categoryAd['timerText'];?>
+                                    <?/*=$categoryAd['timeLeft']["hoursLeft"] . ':' . $categoryAd['timeLeft']["minutesLeft"];*/?>
                                 </div>
                             </div>
                         </div>
