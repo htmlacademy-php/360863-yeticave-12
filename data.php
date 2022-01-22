@@ -394,8 +394,9 @@ GROUP BY bid.lot_id, bid.person_id
 function getLastBidUserId ($link, $lotId)
 {
     try {
-        $sql_bid = "SELECT bid.person_id
+        $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email
 FROM bid
+JOIN person on person.id = bid.person_id
 WHERE bid.lot_id = ?
 ORDER BY bid.date_created_at DESC
 LIMIT 1
@@ -412,6 +413,24 @@ LIMIT 1
 
 
     } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getWinnerLots (object $link): array
+{
+    try {
+        $sql = "SELECT *
+FROM lot
+
+WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
+        $object_result = mysqli_query($link, $sql);
+        if (!$object_result){
+            throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
+        }
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+    } catch (Error $error) {
         print($error);
         return [];
     }
