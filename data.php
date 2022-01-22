@@ -85,7 +85,7 @@ JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE lot.id = ?
 GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_date, img, bid_step";
-        $id = $_GET['id'];
+        $id = (int)$_GET['id'];
         if (!$id) {
             throw new Error('id должен существовать, а он равен:' . ' ' . $id);
         }
@@ -120,7 +120,7 @@ JOIN person ON person_id = person.id
 WHERE lot_id = ?
 ORDER BY sum DESC";
 
-        $id = $_GET['id'];
+        $id = (int)$_GET['id'];
         if (!$id) {
             throw new Error('id должен существовать, а он равен:' . ' ' . $id);
         }
