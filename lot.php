@@ -31,8 +31,10 @@ http_response_code(404);
 } else  {
 
 $lot = prepareData($lot);
+$lastBidUserId = getLastBidUserId($CONNECTION, $lot['id']);
 
-if (isset($user_name) && strtotime($lot['completion_date'])<=strtotime('now')){
+
+if (empty($user_name) || strtotime($lot['completion_date'])<=strtotime('now') || (int)$lot['authorId'] == (int)$safeUserData['id'] || (!empty($lastBidUserId['person_id'])) && (int)$safeUserData['id'] == (int)$lastBidUserId['person_id']){
     $isTakeBidsVisible = false;
 } else {
     $isTakeBidsVisible = true;
