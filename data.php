@@ -4,6 +4,13 @@ require_once('functions.php');
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
 $user_name = null;
+if (!empty($_SESSION['user'])){
+    $safeUserData = getSafeData($_SESSION['user']);
+} else {
+    $safeUserData = [];
+}
+
+
 if (isset($_SESSION['user']['name'])){
     $user_name = $_SESSION['user']['name'];
 }
@@ -351,6 +358,60 @@ lot_id = ?";
         mysqli_stmt_execute($stmt_insert_bid);
         return [];
     } catch (Error $error) {
+        print($error);
+        return [];
+    }
+}
+
+function getUserBids(mysqli $link, int $userId):array
+{
+    try {
+        $sql_bids = "
+SELECT MAX(bid.sum) as current_price, bid.lot_id as lotId, bid.person_id, MAX(bid.date_created_at) as bidDate, lot.title as title, lot.completion_date completion_date, category.title as categoryTitle, person.email as email, person.name as name, person.contacts as contacts, lot.img as img
+FROM lot
+JOIN category on category.id = lot.category_id
+JOIN person on person.id = lot.author_id
+LEFT JOIN bid on bid.lot_id = lot.id
+WHERE bid.person_id = ?
+GROUP BY bid.lot_id, bid.person_id
+";
+
+        $stmt = mysqli_prepare($link, $sql_bids);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'i', $userId);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getLastBidUserId ($link, $lotId)
+{
+    try {
+        $sql_bid = "SELECT bid.person_id
+FROM bid
+WHERE bid.lot_id = ?
+ORDER BY bid.date_created_at DESC
+LIMIT 1
+";
+
+        $stmt = mysqli_prepare($link, $sql_bid);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'i', $lotId);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($object_result);
+
+
+    } catch (Error $error){
         print($error);
         return [];
     }

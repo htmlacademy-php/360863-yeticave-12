@@ -10,6 +10,7 @@ require_once('validate-form.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
+ * @var array $safeUserData - массив данных залогиненного юзера
  */
 
 $safeData = getSafeData($_REQUEST);
@@ -47,7 +48,7 @@ if (isset($_SESSION['user'])) {
         $errors = validateCost($requiredFields, $safeData, $lotPrice, $bidStep);
 
         if (empty($errors)){
-            insertBid($CONNECTION, $safeData['cost'], (int)$_SESSION['user']['id'], (int)$lot['id']);
+            insertBid($CONNECTION, $safeData['cost'], (int)$safeUserData['id'], (int)$lot['id']);
             $safeData = [];
 
             header("Location: /lot.php?id=" . $lot['id']);
