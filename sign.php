@@ -23,7 +23,7 @@ $safeData = [];
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $safeData = getSafeData($_POST, $CONNECTION);
+    $safeData = getSafeData($_POST);
     $errors = validateForm($requiredFields, $safeData);
 
     $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $content = include_template('sign-up.php', [
     'errors' => $errors,
     'safeData' => $safeData,
+    'categories' => $categories,
 ]);
 
 print include_template('layout.php', [

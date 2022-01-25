@@ -53,3 +53,5 @@ ALTER TABLE lot
 ALTER TABLE bid
     ADD (FOREIGN KEY (person_id) REFERENCES person(id) ON DELETE CASCADE,
     FOREIGN KEY (lot_id) REFERENCES lot(id) ON DELETE CASCADE);
+
+CREATE FULLTEXT INDEX lot_ft_search ON lot (title, description);

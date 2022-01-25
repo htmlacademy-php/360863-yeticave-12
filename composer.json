@@ -1,0 +1,17 @@
+{
+    "name": "leonid/360863-yeticave-12",
+    "autoload": {
+        "psr-4": {
+            "Leonid\\360863Yeticave12\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Leonid",
+            "email": "alraun_work@mail.ru"
+        }
+    ],
+    "require": {
+        "symfony/mailer": "^5.4"
+    }
+}

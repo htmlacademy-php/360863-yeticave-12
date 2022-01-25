@@ -25,7 +25,7 @@ $safeData = [];
 $imgValue = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $safeData = getSafeData($_POST, $CONNECTION);
+    $safeData = getSafeData($_POST);
 
 
     if ($_FILES['lot-img']['size'] > 0) {

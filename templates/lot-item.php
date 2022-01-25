@@ -1,24 +1,11 @@
 <main>
 <nav class="nav">
     <ul class="nav__list container">
-        <li class="nav__item">
-            <a href="all-lots.html">Доски и лыжи</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Крепления</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Ботинки</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Одежда</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Инструменты</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Разное</a>
-        </li>
+        <?php foreach ($categories as $category): ?>
+            <li class="nav__item">
+                <a href="/category.php?category=<?=$category['symbolic_code']; ?>"><?=htmlspecialchars($category['title']); ?></a>
+            </li>
+        <?php endforeach; ?>
     </ul>
 </nav>
 <section class="lot-item container">
@@ -32,7 +19,7 @@
             <p class="lot-item__description"><?=$lot['description']; ?></p>
         </div>
         <div class="lot-item__right">
-            <?php if (isset($_SESSION['user'])): ?>
+            <?php if ($isTakeBidsVisible): ?>
             <div class="lot-item__state">
                 <div class="lot-item__timer timer <?= ($lot['timeLeft']["hoursLeft"] === '00') ? 'timer--finishing': ''; ?>">
                     <?=$lot['timeLeft']["hoursLeft"] . ':' . $lot['timeLeft']["minutesLeft"];?>
@@ -46,11 +33,13 @@
                         Мин. ставка <span><?=$lot['bid_step']; ?></span>
                     </div>
                 </div>
-                <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
-                    <p class="lot-item__form-item form__item form__item--invalid">
+                <form class="lot-item__form" action="/lot.php?id=<?=$lot['id']; ?>" method="post" autocomplete="off">
+                    <p class="lot-item__form-item form__item <?= (!empty($errors['cost'])) ? 'form__item--invalid' : ''?>">
                         <label for="cost">Ваша ставка</label>
-                        <input id="cost" type="text" name="cost" placeholder="12 000">
-                        <span class="form__error">Введите наименование лота</span>
+                        <input id="cost" type="text" name="cost" placeholder="12 000" <?= (!empty($safeData['cost'])) ? 'value =' . $safeData['cost'] : '' ?> >
+                        <?php if (!empty($errors['cost'])): ?>
+                        <span class="form__error"><?=$errors['cost']; ?></span>
+                        <?php endif; ?>
                     </p>
                     <button type="submit" class="button">Сделать ставку</button>
                 </form>

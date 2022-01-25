@@ -1,8 +1,25 @@
 <?php
 require_once('config.php');
+require_once('functions.php');
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
-$user_name = 'Леонид';
+$user_name = null;
+if (!empty($_SESSION['user'])){
+    $safeUserData = getSafeData($_SESSION['user']);
+} else {
+    $safeUserData = [];
+}
+
+
+if (isset($_SESSION['user']['name'])){
+    $user_name = $_SESSION['user']['name'];
+}
+
+if (isset($_GET['search'])){
+    $searchWord = htmlspecialchars($_GET['search']);
+} else {
+    $searchWord = null;
+}
 
 $CONNECTION = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
 mysqli_set_charset($CONNECTION, "utf8");
@@ -15,8 +32,7 @@ foreach ($categories as $key => $category){
     $categories[$key]['sectionClass'] = '';
 }
 foreach ($categories as $key => $category) {
-    $categories[$key]['title'] = htmlspecialchars($category['title']);
-    $categories[$key]['symbolic_code'] = htmlspecialchars($category['symbolic_code']);
+    $categories[$key] = getSafeData($category);
     if (!empty($_POST['category'])){
         $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
     }
@@ -48,7 +64,7 @@ ORDER BY lot.date_created_at DESC";
 function getCategories (mysqli $link):array
 {
     try {
-        $sql_categories = "SELECT id, title, symbolic_code FROM category";
+        $sql_categories = "SELECT * FROM category";
         $object_result_categories = mysqli_query($link, $sql_categories);
         if (!$object_result_categories){
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
@@ -60,16 +76,16 @@ function getCategories (mysqli $link):array
     }
 }
 
-function getLot (object $link): ?array
+function getLot (object $link): array
 {
     try {
-        $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step
+        $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step, author_id as authorId
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE lot.id = ?
 GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_date, img, bid_step";
-        $id = $_GET['id'];
+        $id = (int)$_GET['id'];
         if (!$id) {
             throw new Error('id должен существовать, а он равен:' . ' ' . $id);
         }
@@ -104,7 +120,7 @@ JOIN person ON person_id = person.id
 WHERE lot_id = ?
 ORDER BY sum DESC";
 
-        $id = $_GET['id'];
+        $id = (int)$_GET['id'];
         if (!$id) {
             throw new Error('id должен существовать, а он равен:' . ' ' . $id);
         }
@@ -199,4 +215,223 @@ function getPersonData (mysqli $link, string $email): array
     $sql_email = "SELECT * FROM person WHERE email = '$email'";
     $object_result_email = mysqli_query($link, $sql_email);
     return mysqli_fetch_assoc($object_result_email);
+}
+
+
+
+function getSearchAdsCount(mysqli $link, string $searchWord):array
+{
+    try {
+        $sql_search = "SELECT COUNT(*) AS count
+FROM lot
+WHERE MATCH (lot.title, lot.description) AGAINST(?)";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 's', $searchWord);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($object_result);
+
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+
+function getSearchAdsForPage(mysqli $link, string $searchWord, $page_items, $offset):array
+{
+    try {
+        $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+FROM lot
+JOIN category ON category.id = lot.category_id
+LEFT JOIN bid ON lot.id = bid.lot_id
+WHERE MATCH (lot.title, lot.description) AGAINST(?)
+GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'sii', $searchWord, $page_items, $offset);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getCategory(mysqli $link, string $categoryId):array
+{
+    try {
+        $sql_search = "SELECT *
+FROM category
+WHERE category.symbolic_code = ?";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 's', $categoryId);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($object_result);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getCategoryAdsCount(mysqli $link, string $category):array
+{
+    try {
+        $sql_search = "SELECT COUNT(*) AS count
+FROM lot
+JOIN category ON category.id = lot.category_id
+WHERE category.symbolic_code = ? AND lot.completion_date > now()";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 's', $category);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($object_result);
+
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+
+function getCategoryAdsForPage(mysqli $link, string $category, $page_items, $offset):array
+{
+    try {
+        $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+FROM lot
+JOIN category ON category.id = lot.category_id
+LEFT JOIN bid ON lot.id = bid.lot_id
+WHERE category.symbolic_code = ? AND lot.completion_date > now()
+GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
+
+        $stmt = mysqli_prepare($link, $sql_search);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'sii', $category, $page_items, $offset);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function insertBid (mysqli $link, int $sum, int $personId, int $lotId): array
+{
+    try {
+        $sql_insert_bid = "INSERT INTO bid SET
+sum = ?,
+person_id = ?,
+lot_id = ?";
+
+        $stmt_insert_bid = mysqli_prepare($link, $sql_insert_bid);
+        if ($stmt_insert_bid === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt_insert_bid, 'iii', $sum, $personId, $lotId);
+        mysqli_stmt_execute($stmt_insert_bid);
+        return [];
+    } catch (Error $error) {
+        print($error);
+        return [];
+    }
+}
+
+function getUserBids(mysqli $link, int $userId):array
+{
+    try {
+        $sql_bids = "
+SELECT MAX(bid.sum) as current_price, bid.lot_id as lotId, bid.person_id, MAX(bid.date_created_at) as bidDate, lot.title as title, lot.completion_date completion_date, category.title as categoryTitle, person.email as email, person.name as name, person.contacts as contacts, lot.img as img
+FROM lot
+JOIN category on category.id = lot.category_id
+JOIN person on person.id = lot.author_id
+LEFT JOIN bid on bid.lot_id = lot.id
+WHERE bid.person_id = ?
+GROUP BY bid.lot_id, bid.person_id
+";
+
+        $stmt = mysqli_prepare($link, $sql_bids);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'i', $userId);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getLastBidUserId ($link, $lotId)
+{
+    try {
+        $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email
+FROM bid
+JOIN person on person.id = bid.person_id
+WHERE bid.lot_id = ?
+ORDER BY bid.date_created_at DESC
+LIMIT 1
+";
+
+        $stmt = mysqli_prepare($link, $sql_bid);
+        if ($stmt === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt, 'i', $lotId);
+        mysqli_stmt_execute($stmt);
+        $object_result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($object_result);
+
+
+    } catch (Error $error){
+        print($error);
+        return [];
+    }
+}
+
+function getWinnerLots (object $link): array
+{
+    try {
+        $sql = "SELECT *
+FROM lot
+
+WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
+        $object_result = mysqli_query($link, $sql);
+        if (!$object_result){
+            throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
+        }
+        return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+    } catch (Error $error) {
+        print($error);
+        return [];
+    }
 }

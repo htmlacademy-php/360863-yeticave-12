@@ -21,7 +21,7 @@ $safeData = [];
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $safeData = getSafeData($_POST, $CONNECTION);
+    $safeData = getSafeData($_POST);
     $errors = validateForm($requiredFields, $safeData);
 
     if (empty($errors)){
@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user'] = getPersonData($CONNECTION, $safeData['email']);
             header("Location: /index.php");
             $safeData = [];
-            var_dump($_SESSION['user']);
         } else {
             $errors['password'] = 'Вы ввели неверный пароль';
         }
@@ -45,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $content = include_template('login-temp.php', [
     'errors' => $errors,
     'safeData' => $safeData,
+    'categories' => $categories,
+
 ]);
 
 print include_template('layout.php', [
