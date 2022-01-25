@@ -17,18 +17,21 @@ if (!empty($winnerLots)){
         $winnerLot[$key] = getSafeData($winnerLot);
         $winnerLots[$key]['userId'] = getLastBidUserId ($CONNECTION, $winnerLot['id']);
 
-// Конфигурация траспорта
-    $dsn = 'smtp://e2ee698ec99225:79fe5e6dc259ff@smtp.mailtrap.io:2525';
-    $transport = Transport::fromDsn($dsn);
+        if(!empty($winnerLots[$key]['userId']['email'])){
+            // Конфигурация траспорта
+            $dsn = 'smtp://e2ee698ec99225:79fe5e6dc259ff@smtp.mailtrap.io:2525';
+            $transport = Transport::fromDsn($dsn);
 // Формирование сообщения
-    $message = new Email();
-    $message->to($winnerLots[$key]['userId']['email']);
-    $message->from("keks@phpdemo.ru");
-    $message->subject("Ваша ставка победила");
-    $message->text("Вашу гифку «Кот и пылесос» посмотрело больше 1 млн!");
+            $message = new Email();
+            $message->to($winnerLots[$key]['userId']['email']);
+            $message->from("keks@phpdemo.ru");
+            $message->subject("Ваша ставка победила");
+            $message->text("Вашу гифку «Кот и пылесос» посмотрело больше 1 млн!");
 // Отправка сообщения
-    $mailer = new Mailer($transport);
-    $mailer->send($message);
+            $mailer = new Mailer($transport);
+            $mailer->send($message);
+        }
+
     }
 }
 
