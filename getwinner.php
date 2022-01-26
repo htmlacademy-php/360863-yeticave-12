@@ -5,6 +5,9 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 require 'vendor/autoload.php';
 require_once('data.php');
+require_once('helpers.php');
+require_once('functions.php');
+require_once('config.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
 
@@ -17,7 +20,11 @@ if (!empty($winnerLots)){
         $winnerLot[$key] = getSafeData($winnerLot);
         $winnerLots[$key]['userId'] = getLastBidUserId ($CONNECTION, $winnerLot['id']);
 
+
         if(!empty($winnerLots[$key]['userId']['email'])){
+            include_template('email.php', [
+                'winnerLots[$key]' => $winnerLots[$key],
+            ]);
             // Конфигурация траспорта
             $dsn = 'smtp://e2ee698ec99225:79fe5e6dc259ff@smtp.mailtrap.io:2525';
             $transport = Transport::fromDsn($dsn);
@@ -26,7 +33,7 @@ if (!empty($winnerLots)){
             $message->to($winnerLots[$key]['userId']['email']);
             $message->from("keks@phpdemo.ru");
             $message->subject("Ваша ставка победила");
-            $message->text("Вашу гифку «Кот и пылесос» посмотрело больше 1 млн!");
+            $message->html(fopen('templates/email.php', 'r'));
 // Отправка сообщения
             $mailer = new Mailer($transport);
 
@@ -45,4 +52,5 @@ if (!empty($winnerLots)){
 
     }
 }
+
 

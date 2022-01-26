@@ -394,7 +394,7 @@ GROUP BY bid.lot_id, bid.person_id
 function getLastBidUserId ($link, $lotId)
 {
     try {
-        $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email
+        $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email, person.name
 FROM bid
 JOIN person on person.id = bid.person_id
 WHERE bid.lot_id = ?
@@ -423,7 +423,6 @@ function getWinnerLots (object $link): array
     try {
         $sql = "SELECT *
 FROM lot
-
 WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
         $object_result = mysqli_query($link, $sql);
         if (!$object_result){
