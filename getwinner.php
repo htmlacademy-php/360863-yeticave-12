@@ -2,6 +2,7 @@
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 require 'vendor/autoload.php';
 require_once('data.php');
 
@@ -10,7 +11,6 @@ require_once('data.php');
  */
 
 $winnerLots = getWinnerLots($CONNECTION);
-var_dump($winnerLots);
 if (!empty($winnerLots)){
 
     foreach ($winnerLots as $key => $winnerLot){
@@ -29,7 +29,18 @@ if (!empty($winnerLots)){
             $message->text("Вашу гифку «Кот и пылесос» посмотрело больше 1 млн!");
 // Отправка сообщения
             $mailer = new Mailer($transport);
-            $mailer->send($message);
+
+            try {
+                $mailer->send($message);
+            } catch (TransportExceptionInterface $error) {
+                // некая ошибка предотвратила отправку письма; отобразить сообщение
+                // об ошибке или попробовать отправить сообщение повторно
+                print ($error);
+            }
+
+            if (empty($error)){
+                insertWinner ($CONNECTION, $winnerLots[$key]['userId']['person_id'], $winnerLots[$key]['userId']['lot_id']);
+            }
         }
 
     }

@@ -10,7 +10,7 @@ require_once('getwinner.php');
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  */
-var_dump($winnerLots[0]['userId']);
+
 
 $ads = getAds($CONNECTION);
 foreach ($ads as $key => $ad) {

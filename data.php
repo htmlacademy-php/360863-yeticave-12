@@ -435,3 +435,25 @@ WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
         return [];
     }
 }
+
+function insertWinner (mysqli $link, int $winnerId, int $lotId): array
+{
+    try {
+
+        $sql_update_person = "UPDATE lot 
+SET winner_id = ?
+WHERE id = ?
+";
+
+        $stmt_update_person = mysqli_prepare($link, $sql_update_person);
+        if ($stmt_update_person === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt_update_person, 'ii', $winnerId, $lotId);
+        mysqli_stmt_execute($stmt_update_person);
+        return [];
+    } catch (Error $error) {
+        print($error);
+        return [];
+    }
+}
