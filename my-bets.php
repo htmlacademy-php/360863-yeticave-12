@@ -42,7 +42,6 @@ if (!isset($_SESSION['user'])){
             $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
         }
     }
-//var_dump($userBids[0]['timeLeft']['hoursLeft']);
 
     $content = include_template('bets-tmp.php', [
         'categories' => $categories,

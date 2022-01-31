@@ -394,7 +394,7 @@ GROUP BY bid.lot_id, bid.person_id
 function getLastBidUserId ($link, $lotId)
 {
     try {
-        $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email
+        $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email, person.name
 FROM bid
 JOIN person on person.id = bid.person_id
 WHERE bid.lot_id = ?
@@ -423,13 +423,34 @@ function getWinnerLots (object $link): array
     try {
         $sql = "SELECT *
 FROM lot
-
 WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
         $object_result = mysqli_query($link, $sql);
         if (!$object_result){
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
         }
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
+    } catch (Error $error) {
+        print($error);
+        return [];
+    }
+}
+
+function insertWinner (mysqli $link, int $winnerId, int $lotId): array
+{
+    try {
+
+        $sql_update_person = "UPDATE lot 
+SET winner_id = ?
+WHERE id = ?
+";
+
+        $stmt_update_person = mysqli_prepare($link, $sql_update_person);
+        if ($stmt_update_person === false) {
+            throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
+        }
+        mysqli_stmt_bind_param($stmt_update_person, 'ii', $winnerId, $lotId);
+        mysqli_stmt_execute($stmt_update_person);
+        return [];
     } catch (Error $error) {
         print($error);
         return [];
