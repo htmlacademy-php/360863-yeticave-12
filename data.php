@@ -56,7 +56,6 @@ ORDER BY lot.date_created_at DESC";
         }
         return mysqli_fetch_all($object_result_ads, MYSQLI_ASSOC);
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -71,7 +70,6 @@ function getCategories (mysqli $link):array
         }
         return mysqli_fetch_all($object_result_categories, MYSQLI_ASSOC);
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -106,7 +104,6 @@ GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_
         $object_result_lot = mysqli_stmt_get_result($stmt_lot);
         return mysqli_fetch_assoc($object_result_lot);
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -141,7 +138,6 @@ ORDER BY sum DESC";
         $object_result_bids = mysqli_stmt_get_result($stmt_bids);
         return mysqli_fetch_all($object_result_bids, MYSQLI_ASSOC);
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -182,7 +178,6 @@ completion_date = ?";
         mysqli_stmt_execute($stmt_insert_lot);
         return [];
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -205,7 +200,6 @@ contacts = ?";
         mysqli_stmt_execute($stmt_insert_person);
         return [];
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -237,7 +231,6 @@ WHERE MATCH (lot.title, lot.description) AGAINST(?)";
 
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -264,7 +257,6 @@ ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -286,7 +278,6 @@ WHERE category.symbolic_code = ?";
         return mysqli_fetch_assoc($object_result);
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -310,7 +301,6 @@ WHERE category.symbolic_code = ? AND lot.completion_date > now()";
 
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -337,7 +327,6 @@ ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -358,7 +347,6 @@ lot_id = ?";
         mysqli_stmt_execute($stmt_insert_bid);
         return [];
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -386,7 +374,6 @@ GROUP BY bid.lot_id, bid.person_id
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -413,7 +400,6 @@ LIMIT 1
 
 
     } catch (Error $error){
-        print($error);
         return [];
     }
 }
@@ -430,7 +416,6 @@ WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
         }
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
@@ -452,7 +437,6 @@ WHERE id = ?
         mysqli_stmt_execute($stmt_update_person);
         return [];
     } catch (Error $error) {
-        print($error);
         return [];
     }
 }
