@@ -42,8 +42,7 @@ if (!empty($winnerLots)){
             } catch (TransportExceptionInterface $error) {
                 // некая ошибка предотвратила отправку письма; отобразить сообщение
                 // об ошибке или попробовать отправить сообщение повторно
-                print ($error);
-            }
+                }
 
             if (empty($error)){
                 insertWinner ($CONNECTION, $winnerLots[$key]['userId']['person_id'], $winnerLots[$key]['userId']['lot_id']);

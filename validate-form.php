@@ -127,7 +127,6 @@ function compareEmail  (mysqli $link, string $email): bool
         }
         return false;
     } catch (Error $error) {
-        print($error);
         return false;
     }
 }
