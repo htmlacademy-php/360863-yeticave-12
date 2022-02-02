@@ -1,5 +1,20 @@
 <?php
-
+/**
+ * Получаем массив ошибок после валидации полей формы
+ * @param array $requiredFields Массив с полями формы для валидации. Поля для валидации:
+ * прикрепление файла image/jpeg', 'image/jpg', 'image/png
+ * проверка названия лота
+ * проверка сообщения
+ * проверка выбранной категории
+ * проверка начальной цены
+ * проверка шага ставки
+ * проверка даты завершения торгов
+ * проверка email
+ * проверка пароля
+ * проверка имени пользователя
+ * @param array $safeData Данные, которые заполнили в поля форм
+ * @return array Получаем массив ошибок валидации.
+ */
 function validateForm(array $requiredFields, array $safeData): array
 {
     $errors = [];
@@ -108,6 +123,14 @@ function validateForm(array $requiredFields, array $safeData): array
     return $errors;
 }
 
+/**
+ * Получаем массив ошибок после валидации полей формы добавления ставки
+ * @param array $requiredFields Массив с полями формы для валидации. Поля для валидации:
+ * @param array $safeData Данные, которые заполнили в поля формы
+ * @param int $lotPrice Стоимость лота из БД
+ * @param int $bidStep Шаг ставки из БД
+ * @return array Получаем массив ошибок валидации.
+ */
 function validateCost(array $requiredFields, array $safeData, int $lotPrice, int $bidStep): array
 {
     $errors = [];
@@ -132,6 +155,12 @@ function validateCost(array $requiredFields, array $safeData, int $lotPrice, int
     return $errors;
 }
 
+/**
+ * Получаем результат сравнения email, который пользователь ввел. Если такой email есть в базе получаем true если нет false
+ * @param mysqli $link Соединение с БД
+ * @param string $email Проверяемый email
+ * @return bool Булевое значение, есть ли в БД такой email
+ */
 function compareEmail(mysqli $link, string $email): bool
 {
     try {
@@ -150,6 +179,14 @@ function compareEmail(mysqli $link, string $email): bool
     }
 }
 
+/**
+ * Получаем результат сравнения пароля и email, который пользователь ввел. Если пароль совпадает с паролем у данного
+ * email получаем true если нет false
+ * @param mysqli $link Соединение с БД
+ * @param string $email Проверяемый email
+ * @param string $password Проверяемый пароль
+ * @return bool Булевое значение, есть ли в БД такой пароль
+ */
 function comparePassword(mysqli $link, string $email, string $password): bool
 {
     $sql_email = "SELECT * FROM person WHERE email = '$email'";

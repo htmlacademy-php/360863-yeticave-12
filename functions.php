@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Форматируем сумму
+ * @param string $price Стоимость из БД вида 40100
+ * @param string $currency Добавляем валюту, по умолчанию рубли
+ * @return string Получаем результат вида 40 100 ₽
+ */
 function formatAdPrice(string $price, string $currency = ' ₽'): string
 {
     $formatedPrice = number_format(ceil($price), 0, ',', ' ');
@@ -8,7 +14,11 @@ function formatAdPrice(string $price, string $currency = ' ₽'): string
 
 ;
 
-
+/**
+ * Получаем сколько осталось времени до окончания торгов
+ * @param string $expirationDate Дата завершения торгов из БД
+ * @return array Массив [часов осталось, минут осталось]
+ */
 function getTimeLeft(string $expirationDate): array
 {
     $timeNow = date_create(date("Y-m-d H:i"));
@@ -24,6 +34,15 @@ function getTimeLeft(string $expirationDate): array
     return $timeLeft;
 }
 
+/**
+ * Получаем сколько прошло времени с определенной даты
+ * @param string $dateCreate Дата
+ * @return string Получаем время с определенной даты. Если прошло меньше минуты запись 'меньше минуты назад';
+ * Если прошло больше минуты и меньше часа, то запись вида 'Количество минут назад';
+ * Если прошло от часа до двух, то запись вида 'Час назад';
+ * Если прошло от часа до 24 часов, то запись вида 'Количество часов назад';
+ * Если прошло от 24 часов, то запись вида '22-08-2022 в 22:10';
+ */
 function getTimePassed(string $dateCreate): string
 {
     $timeNow = date_create(date("Y-m-d H:i"));
@@ -52,6 +71,15 @@ function getTimePassed(string $dateCreate): string
     }
 }
 
+/**
+ * Получаем безопасные данные из массива
+ * @param array $data Массив с данными
+ * @return array Массив с безопасными данными.
+ * Если в массиве присутствует шаг ставки, то он форматируется в вид "40 000 руб"
+ * Если в массиве присутствует дата окончания торгов, то она форматируется в массив [часов осталось, минут осталось]
+ * Если в массиве присутствует текущая цена, то он форматируется в вид "40 000 руб"
+ * Если в массиве присутствует текущая цена, то он форматируется в вид "40 000"
+ */
 function prepareData(array $data): array
 {
     foreach ($data as $key => $value) {
@@ -76,6 +104,11 @@ function prepareData(array $data): array
     return $data;
 }
 
+/**
+ * Получаем безопасные данные из массива
+ * @param array $data Массив с данными
+ * @return array Массив с безопасными данными с помощью функции htmlspecialchars.
+ */
 function getSafeData(array $data): array
 {
     $safeData = [];

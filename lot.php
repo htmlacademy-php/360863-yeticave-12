@@ -40,7 +40,7 @@ if (empty($lot['id'])) {
         $isTakeBidsVisible = true;
     }
 
-    $bids = getbids($CONNECTION);
+    $bids = getBids($CONNECTION);
     $errors = [];
     $lotPrice = (int)str_replace(' ', '', $lot['price']);
     $bidStep = (int)$lot['bid_step'];
