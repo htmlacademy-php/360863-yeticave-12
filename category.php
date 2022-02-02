@@ -15,18 +15,18 @@ $safeData = getSafeData($_REQUEST);
 
 $category = getCategory($CONNECTION, $safeData['category']);
 
-if(isset($safeData['page'])){
-    $cur_page = (int) $safeData['page'];
+if (isset($safeData['page'])) {
+    $cur_page = (int)$safeData['page'];
 } else {
     $cur_page = 1;
 }
 $page_items = 9;
 $allCategoryAds = getCategoryAdsCount($CONNECTION, $safeData['category']);
 $items_count = $allCategoryAds['count'];
-if ($items_count == 0){
-    $pageH2 = 'Лоты в категории "' .$category['title'] . '" не найдены';
+if ($items_count == 0) {
+    $pageH2 = 'Лоты в категории "' . $category['title'] . '" не найдены';
 } else {
-    $pageH2 = 'Все лоты в категории "'.$category['title'] . '"';
+    $pageH2 = 'Все лоты в категории "' . $category['title'] . '"';
 }
 
 
@@ -50,11 +50,11 @@ $categoryAds = getCategoryAdsForPage($CONNECTION, $safeData['category'], $page_i
 
 foreach ($categoryAds as $key => $categoryAd) {
     $categoryAds[$key]['starting_price'] = formatAdPrice($categoryAd['starting_price']);
-    if(isset($categoryAds[$key]['current_price'])){
+    if (isset($categoryAds[$key]['current_price'])) {
         $categoryAds[$key]['current_price'] = formatAdPrice($categoryAd['current_price']);
     }
     $categoryAds[$key]['timeLeft'] = getTimeLeft($categoryAd['completion_date']);
-    if (strtotime($categoryAds[$key]['completion_date']) <= strtotime('now')){
+    if (strtotime($categoryAds[$key]['completion_date']) <= strtotime('now')) {
         $categoryAds[$key]['timerText'] = 'торги окончены';
     } else {
         $categoryAds[$key]['timerText'] = $categoryAds[$key]['timeLeft']["hoursLeft"] . ':' . $categoryAds[$key]['timeLeft']["minutesLeft"];
@@ -62,19 +62,19 @@ foreach ($categoryAds as $key => $categoryAd) {
 
 }
 
-    $content = include_template('category-tmp.php', [
-        'categories' => $categories,
-        'category' => $category,
-        'user_name' => $user_name,
-        'categoryAds' => $categoryAds,
-        'pages_count' => $pages_count,
-        'pages' => $pages,
-        'cur_page' => $cur_page,
-        'isFirstPageExist' => $isFirstPageExist,
-        'isLastPageExist' => $isLastPageExist,
-        'pageH2' => $pageH2,
-        'safeData' => $safeData,
-    ]);
+$content = include_template('category-tmp.php', [
+    'categories' => $categories,
+    'category' => $category,
+    'user_name' => $user_name,
+    'categoryAds' => $categoryAds,
+    'pages_count' => $pages_count,
+    'pages' => $pages,
+    'cur_page' => $cur_page,
+    'isFirstPageExist' => $isFirstPageExist,
+    'isLastPageExist' => $isLastPageExist,
+    'pageH2' => $pageH2,
+    'safeData' => $safeData,
+]);
 
 
 print include_template('layout.php', [

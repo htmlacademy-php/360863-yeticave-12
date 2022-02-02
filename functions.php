@@ -1,13 +1,15 @@
 <?php
 
-function formatAdPrice(string $price, string $currency = ' ₽'):string
+function formatAdPrice(string $price, string $currency = ' ₽'): string
 {
     $formatedPrice = number_format(ceil($price), 0, ',', ' ');
     return $formatedPrice . $currency;
-};
+}
+
+;
 
 
-function getTimeLeft (string $expirationDate): array
+function getTimeLeft(string $expirationDate): array
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $timeExpiration = date_create($expirationDate);
@@ -22,31 +24,39 @@ function getTimeLeft (string $expirationDate): array
     return $timeLeft;
 }
 
-function getTimePassed (string $dateCreate):string
+function getTimePassed(string $dateCreate): string
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $dateCreated = date_create($dateCreate);
     $timePassed = date_diff($dateCreated, $timeNow);
-    $days = $timePassed -> format('%a');
-    $hours = $timePassed -> format('%h');
-    $minutes = $timePassed -> format('%i');
-    if ($days == 0 & $hours == 0 & $minutes == 0 ){
+    $days = $timePassed->format('%a');
+    $hours = $timePassed->format('%h');
+    $minutes = $timePassed->format('%i');
+    if ($days == 0 & $hours == 0 & $minutes == 0) {
         return 'меньше минуты назад';
-    } else if ($days == 0 & $hours == 0 & $minutes > 0){
-        return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
-    } else if ($days == 0 & $hours == 1){
-        return 'Час назад';
-    } else if ($days == 0 & $hours > 1){
-        return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
     } else {
-        return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
+        if ($days == 0 & $hours == 0 & $minutes > 0) {
+            return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
+        } else {
+            if ($days == 0 & $hours == 1) {
+                return 'Час назад';
+            } else {
+                if ($days == 0 & $hours > 1) {
+                    return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
+                } else {
+                    return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i',
+                            strtotime($dateCreate));
+                }
+            }
+        }
     }
 }
-function prepareData (array $data): array
+
+function prepareData(array $data): array
 {
-    foreach ($data as $key => $value){
+    foreach ($data as $key => $value) {
         $value = htmlspecialchars($value);
-        switch ($key){
+        switch ($key) {
             case 'bid_step':
                 $value = formatAdPrice(htmlspecialchars($value));
                 break;
@@ -55,10 +65,10 @@ function prepareData (array $data): array
                 break;
             case 'current_price':
                 if (!empty($value)) {
-                    $data['price'] =  formatAdPrice(htmlspecialchars($value), '');
-            } else {
+                    $data['price'] = formatAdPrice(htmlspecialchars($value), '');
+                } else {
                     $data['price'] = formatAdPrice(htmlspecialchars($data['starting_price']), '');
-            }
+                }
                 break;
         }
         $data[$key] = $value;
@@ -66,12 +76,12 @@ function prepareData (array $data): array
     return $data;
 }
 
-function getSafeData (array $data): array
+function getSafeData(array $data): array
 {
     $safeData = [];
     foreach ($data as $key => $value) {
         $safeData[$key] = htmlspecialchars($value);
-        }
+    }
 
     return $safeData;
 }

@@ -8,17 +8,17 @@ require_once('data.php');
  * @var int $user_name - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
-* @var string $searchWord - Поисковой запрос
+ * @var string $searchWord - Поисковой запрос
  */
 $safeData = getSafeData($_REQUEST);
-if (empty($safeData['search']) ) {
+if (empty($safeData['search'])) {
     $content = include_template('404-error.php');
     http_response_code(404);
 } else {
     $safeDataSearch = trim($safeData['search']);
 
-    if(isset($safeData['page'])){
-        $cur_page = (int) $safeData['page'];
+    if (isset($safeData['page'])) {
+        $cur_page = (int)$safeData['page'];
     } else {
         $cur_page = 1;
     }
@@ -47,20 +47,20 @@ if (empty($safeData['search']) ) {
 
     foreach ($searchAds as $key => $searchAd) {
         $searchAds[$key]['starting_price'] = formatAdPrice($searchAd['starting_price']);
-        if(isset($searchAds[$key]['current_price'])){
+        if (isset($searchAds[$key]['current_price'])) {
             $searchAds[$key]['current_price'] = formatAdPrice($searchAd['current_price']);
         }
         $searchAds[$key]['timeLeft'] = getTimeLeft($searchAd['completion_date']);
     }
 
-    if(empty($searchAds)) {
+    if (empty($searchAds)) {
         $searchResult = 'Ничего не найдено по вашему запросу';
     } else {
         $searchResult = "Результаты поиска по запросу «{$safeDataSearch}»";
     }
 
 
-    if (isset($safeData['page']) && $safeData['page'] > $pages_count){
+    if (isset($safeData['page']) && $safeData['page'] > $pages_count) {
         $content = include_template('404-error.php', [
             'categories' => $categories,
         ]);
