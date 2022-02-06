@@ -10,43 +10,43 @@ require_once('config.php');
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  */
-if (isset($_SESSION['user'])){
+if (isset($_SESSION['user'])) {
     http_response_code(403);
 } else {
-$requiredFields = [
-    'email',
-    'password',
-    'name',
-    'message',
-];
-$safeData = [];
-$errors = [];
+    $requiredFields = [
+        'email',
+        'password',
+        'name',
+        'message',
+    ];
+    $safeData = [];
+    $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $safeData = getSafeData($_POST);
-    $errors = validateForm($requiredFields, $safeData);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $safeData = getSafeData($_POST);
+        $errors = validateForm($requiredFields, $safeData);
 
-    $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
-    if ($isEmailCompare){
-        $errors['email'] = 'пользователь с таким email уже зарегистрирован';
+        $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
+        if ($isEmailCompare) {
+            $errors['email'] = 'пользователь с таким email уже зарегистрирован';
+        }
+
+        if (empty($errors)) {
+            insertPerson($CONNECTION, $safeData);
+            $safeData = [];
+            header("Location: /login.php");
+        }
     }
+    $content = include_template('sign-up.php', [
+        'errors' => $errors,
+        'safeData' => $safeData,
+        'categories' => $categories,
+    ]);
 
-    if (empty($errors)){
-        insertPerson($CONNECTION, $safeData);
-        $safeData = [];
-        header("Location: /login.php");
-    }
-}
-$content = include_template('sign-up.php', [
-    'errors' => $errors,
-    'safeData' => $safeData,
-    'categories' => $categories,
-]);
-
-print include_template('layout.php', [
-    'title' => $title,
-    'user_name' => $user_name,
-    'content' => $content,
-    'categories' => $categories,
-]);
+    print include_template('layout.php', [
+        'title' => $title,
+        'user_name' => $user_name,
+        'content' => $content,
+        'categories' => $categories,
+    ]);
 }

@@ -4,18 +4,18 @@ require_once('functions.php');
 $is_auth = rand(0, 1);
 $title = 'Главная страница';
 $user_name = null;
-if (!empty($_SESSION['user'])){
+if (!empty($_SESSION['user'])) {
     $safeUserData = getSafeData($_SESSION['user']);
 } else {
     $safeUserData = [];
 }
 
 
-if (isset($_SESSION['user']['name'])){
+if (isset($_SESSION['user']['name'])) {
     $user_name = $_SESSION['user']['name'];
 }
 
-if (isset($_GET['search'])){
+if (isset($_GET['search'])) {
     $searchWord = htmlspecialchars($_GET['search']);
 } else {
     $searchWord = null;
@@ -27,19 +27,24 @@ if ($CONNECTION == false) {
     echo "ошибка подключения" . ' ' . mysqli_connect_error();
 };
 
-$categories = getCategories ($CONNECTION);
-foreach ($categories as $key => $category){
+$categories = getCategories($CONNECTION);
+foreach ($categories as $key => $category) {
     $categories[$key]['sectionClass'] = '';
 }
 foreach ($categories as $key => $category) {
     $categories[$key] = getSafeData($category);
-    if (!empty($_POST['category'])){
+    if (!empty($_POST['category'])) {
         $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
     }
 
 }
 
-function getAds (object $link):array
+/**
+ * Получаем все активные объявления
+ * @param mysqli $link Соединение с БД
+ * @return array Массив объявлений
+ */
+function getAds(mysqli $link): array
 {
     try {
         $sql_ads = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price
@@ -55,17 +60,22 @@ ORDER BY lot.date_created_at DESC";
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
         }
         return mysqli_fetch_all($object_result_ads, MYSQLI_ASSOC);
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-function getCategories (mysqli $link):array
+/**
+ * Получаем все категории
+ * @param mysqli $link Соединение с БД
+ * @return array Массив категорий
+ */
+function getCategories(mysqli $link): array
 {
     try {
         $sql_categories = "SELECT * FROM category";
         $object_result_categories = mysqli_query($link, $sql_categories);
-        if (!$object_result_categories){
+        if (!$object_result_categories) {
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
         }
         return mysqli_fetch_all($object_result_categories, MYSQLI_ASSOC);
@@ -74,7 +84,12 @@ function getCategories (mysqli $link):array
     }
 }
 
-function getLot (object $link): array
+/**
+ * Получаем все данные выбранного лота
+ * @param mysqli $link Соединение с БД
+ * @return array Массив данных лота
+ */
+function getLot(mysqli $link): array
 {
     try {
         $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step, author_id as authorId
@@ -108,7 +123,12 @@ GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_
     }
 }
 
-function getbids (object $link):array
+/**
+ * Получаем все ставки выбранного лота
+ * @param mysqli $link Соединение с БД
+ * @return array Массив данных ставок
+ */
+function getBids(mysqli $link): array
 {
     try {
         $sql_bids = "SELECT bid.date_created_at, sum, person.name as name
@@ -142,17 +162,23 @@ ORDER BY sum DESC";
     }
 }
 
-function insertLot (mysqli $link, array $safeData): array
+/**
+ * Добавляем новый лот в БД
+ * @param mysqli $link Соединение с БД
+* @param array $safeData Массив данных лота (обязательно: название, id автора, id категории, описание лота, изображение
+ * лота, стартовая цена, шаг ставки, дата завершения торгов)
+ */
+function insertLot(mysqli $link, array $safeData): array
 {
     try {
-        if(!empty($_FILES)){
-        $file_name = $_FILES['lot-img']['name'];
-        $file_path = __DIR__ . '/uploads/';
-        $imgUrlPost = '/uploads/' . $file_name;
+        if (!empty($_FILES)) {
+            $file_name = $_FILES['lot-img']['name'];
+            $file_path = __DIR__ . '/uploads/';
+            $imgUrlPost = '/uploads/' . $file_name;
 
-        move_uploaded_file($_FILES['lot-img']['tmp_name'], $file_path . $file_name);
+            move_uploaded_file($_FILES['lot-img']['tmp_name'], $file_path . $file_name);
         }
-        if ($_FILES['lot-img']['size'] === 0){
+        if ($_FILES['lot-img']['size'] === 0) {
             $imgUrlPost = $_POST['img'];
         }
         $authorID = $_SESSION['user']['id'];
@@ -167,13 +193,14 @@ starting_price = ?,
 bid_step = ?,
 completion_date = ?";
 
-        $safeData['lot-rate'] = mysqli_real_escape_string($link, (int) $safeData['lot-rate']);
-        $safeData['lot-step'] = mysqli_real_escape_string($link, (int) $safeData['lot-step']);
+        $safeData['lot-rate'] = mysqli_real_escape_string($link, (int)$safeData['lot-rate']);
+        $safeData['lot-step'] = mysqli_real_escape_string($link, (int)$safeData['lot-step']);
         $stmt_insert_lot = mysqli_prepare($link, $sql_insert_lot);
         if ($stmt_insert_lot === false) {
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        mysqli_stmt_bind_param($stmt_insert_lot, 'sssssiis', $safeData['lot-name'], $authorID, $safeData['category'], $safeData['message'], $imgUrlPost,
+        mysqli_stmt_bind_param($stmt_insert_lot, 'sssssiis', $safeData['lot-name'], $authorID, $safeData['category'],
+            $safeData['message'], $imgUrlPost,
             $safeData['lot-rate'], $safeData['lot-step'], $safeData['lot-date']);
         mysqli_stmt_execute($stmt_insert_lot);
         return [];
@@ -182,11 +209,16 @@ completion_date = ?";
     }
 }
 
-function insertPerson (mysqli $link, array $safeData): array
+/**
+ * Добавляем нового пользователя в БД
+ * @param mysqli $link Соединение с БД
+ * @param array $safeData Массив данных пользователя (обязательно: email, имя, пароль, контакты)
+ */
+function insertPerson(mysqli $link, array $safeData): array
 {
     try {
-         $safeData['password'] = password_hash($safeData['password'], PASSWORD_BCRYPT);
-         $sql_insert_person = "INSERT INTO person SET
+        $safeData['password'] = password_hash($safeData['password'], PASSWORD_BCRYPT);
+        $sql_insert_person = "INSERT INTO person SET
 email = ?,
 name = ?,
 password = ?,
@@ -196,7 +228,8 @@ contacts = ?";
         if ($stmt_insert_person === false) {
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        mysqli_stmt_bind_param($stmt_insert_person, 'ssss', $safeData['email'], $safeData['name'], $safeData['password'], $safeData['message']);
+        mysqli_stmt_bind_param($stmt_insert_person, 'ssss', $safeData['email'], $safeData['name'],
+            $safeData['password'], $safeData['message']);
         mysqli_stmt_execute($stmt_insert_person);
         return [];
     } catch (Error $error) {
@@ -204,16 +237,26 @@ contacts = ?";
     }
 }
 
-function getPersonData (mysqli $link, string $email): array
+/**
+ * Получаем массив данных пользователя по его почте
+ * @param mysqli $link Соединение с БД
+ * @param string $email Email пользователя
+ * @return array Массив данных пользователя
+ */
+function getPersonData(mysqli $link, string $email): array
 {
     $sql_email = "SELECT * FROM person WHERE email = '$email'";
     $object_result_email = mysqli_query($link, $sql_email);
     return mysqli_fetch_assoc($object_result_email);
 }
 
-
-
-function getSearchAdsCount(mysqli $link, string $searchWord):array
+/**
+ * Получаем количество лотов, которые соответствуют поиску
+ * @param mysqli $link Соединение с БД
+ * @param string $searchWord Поисковый запрос (должен быть минимум 3 символа)
+ * @return array Массив с количеством лотов, которые соответствуют поиску
+ */
+function getSearchAdsCount(mysqli $link, string $searchWord): array
 {
     try {
         $sql_search = "SELECT COUNT(*) AS count
@@ -230,13 +273,20 @@ WHERE MATCH (lot.title, lot.description) AGAINST(?)";
         return mysqli_fetch_assoc($object_result);
 
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-
-function getSearchAdsForPage(mysqli $link, string $searchWord, $page_items, $offset):array
+/**
+ * Получаем количество лотов, которые соответствуют поиску для страницы с пагинацией
+ * @param mysqli $link Соединение с БД
+ * @param string $searchWord Поисковый запрос (должен быть минимум 3 символа)
+ * @param int $page_items Количество объявлений на странице с пагинацией
+ * @param int $offset Смещение относительно начала получаемого списка
+ * @return array Массив с данными лотов, которые соответствуют поиску
+ */
+function getSearchAdsForPage(mysqli $link, string $searchWord, int $page_items, int $offset): array
 {
     try {
         $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
@@ -256,12 +306,18 @@ ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
         $object_result = mysqli_stmt_get_result($stmt);
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-function getCategory(mysqli $link, string $categoryId):array
+/**
+ * Получаем категорию из адресной строки по символьному коду
+ * @param mysqli $link Соединение с БД
+ * @param string $categoryId Символьный код категории
+ * @return array Массив с данными категории
+ */
+function getCategory(mysqli $link, string $categoryId): array
 {
     try {
         $sql_search = "SELECT *
@@ -277,12 +333,19 @@ WHERE category.symbolic_code = ?";
         $object_result = mysqli_stmt_get_result($stmt);
         return mysqli_fetch_assoc($object_result);
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-function getCategoryAdsCount(mysqli $link, string $category):array
+
+/**
+ * Получаем количество активных лотов, которые соответствуют категории по ее символьному коду
+ * @param mysqli $link Соединение с БД
+ * @param string $category Символьный код категории
+ * @return array Массив в котором содержится число количество активных лотов, в категории
+ */
+function getCategoryAdsCount(mysqli $link, string $category): array
 {
     try {
         $sql_search = "SELECT COUNT(*) AS count
@@ -300,13 +363,20 @@ WHERE category.symbolic_code = ? AND lot.completion_date > now()";
         return mysqli_fetch_assoc($object_result);
 
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-
-function getCategoryAdsForPage(mysqli $link, string $category, $page_items, $offset):array
+/**
+ * Получаем количество лотов, которые соответствуют категории по ее символьному коду
+ * @param mysqli $link Соединение с БД
+ * @param string $category Символьный код категории
+ * @param int $page_items Количество объявлений на странице с пагинацией
+ * @param int $offset Смещение относительно начала получаемого списка
+ * @return array Массив с данными лотов для страницы, которые соответствуют категории
+ */
+function getCategoryAdsForPage(mysqli $link, string $category, int $page_items, int $offset): array
 {
     try {
         $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
@@ -326,12 +396,19 @@ ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
         $object_result = mysqli_stmt_get_result($stmt);
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-function insertBid (mysqli $link, int $sum, int $personId, int $lotId): array
+/**
+ * Записываем ставку пользователя
+ * @param mysqli $link Соединение с БД
+ * @param int $sum Ставка пользователя
+ * @param int $personId Id пользователя
+ * @param int $lotId Id лота
+ */
+function insertBid(mysqli $link, int $sum, int $personId, int $lotId): array
 {
     try {
         $sql_insert_bid = "INSERT INTO bid SET
@@ -351,7 +428,13 @@ lot_id = ?";
     }
 }
 
-function getUserBids(mysqli $link, int $userId):array
+/**
+ * Получаем все максимальные ставки сделанные пользователем
+ * @param mysqli $link Соединение с БД
+ * @param int $userId Id пользователя
+ * @return array Массив с данными лотов, ставок и данных пользователя
+ */
+function getUserBids(mysqli $link, int $userId): array
 {
     try {
         $sql_bids = "
@@ -373,12 +456,18 @@ GROUP BY bid.lot_id, bid.person_id
         $object_result = mysqli_stmt_get_result($stmt);
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-function getLastBidUserId ($link, $lotId)
+/**
+ * Получаем данные пользователя, который сделал последнюю ставку у лота
+ * @param mysqli $link Соединение с БД
+ * @param int $lotId Id лота
+ * @return array Массив с данными пользователя
+ */
+function getLastBidUserId(mysqli $link, int $lotId): array
 {
     try {
         $sql_bid = "SELECT bid.person_id, bid.lot_id, person.email, person.name
@@ -399,19 +488,24 @@ LIMIT 1
         return mysqli_fetch_assoc($object_result);
 
 
-    } catch (Error $error){
+    } catch (Error $error) {
         return [];
     }
 }
 
-function getWinnerLots (object $link): array
+/**
+ * Получаем все лоты, у которых нет победителя плюс закончилось время
+ * @param mysqli $link Соединение с БД
+ * @return array Массив с данными лотов
+ */
+function getWinnerLots(mysqli $link): array
 {
     try {
         $sql = "SELECT *
 FROM lot
 WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
         $object_result = mysqli_query($link, $sql);
-        if (!$object_result){
+        if (!$object_result) {
             throw new Error ('Ошибка объекта результата MySql:' . ' ' . mysqli_error($link));
         }
         return mysqli_fetch_all($object_result, MYSQLI_ASSOC);
@@ -420,7 +514,13 @@ WHERE lot.winner_id is null AND lot.completion_date <= NOW()";
     }
 }
 
-function insertWinner (mysqli $link, int $winnerId, int $lotId): array
+/**
+ * Записываем победителя лота в БД
+ * @param mysqli $link Соединение с БД
+ * @param int $winnerId Id пользователя, ставка которого победила
+ * @param int $lotId Id лота, где определился победитель
+ */
+function insertWinner(mysqli $link, int $winnerId, int $lotId): array
 {
     try {
 

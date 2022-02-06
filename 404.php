@@ -9,7 +9,7 @@ require_once('functions.php');
  * @var array $categories - массив для вывода категорий
  */
 
-$categories = getCategories ($CONNECTION);
+$categories = getCategories($CONNECTION);
 foreach ($categories as $key => $category) {
     $categories[$key] = getSafeData($category);
 };

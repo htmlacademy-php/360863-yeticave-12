@@ -1,13 +1,25 @@
 <?php
 
-function formatAdPrice(string $price, string $currency = ' ₽'):string
+/**
+ * Форматируем сумму
+ * @param string $price Стоимость из БД вида 40100
+ * @param string $currency Добавляем валюту, по умолчанию рубли
+ * @return string Получаем результат вида 40 100 ₽
+ */
+function formatAdPrice(string $price, string $currency = ' ₽'): string
 {
     $formatedPrice = number_format(ceil($price), 0, ',', ' ');
     return $formatedPrice . $currency;
-};
+}
 
+;
 
-function getTimeLeft (string $expirationDate): array
+/**
+ * Получаем сколько осталось времени до окончания торгов
+ * @param string $expirationDate Дата завершения торгов из БД
+ * @return array Массив [часов осталось, минут осталось]
+ */
+function getTimeLeft(string $expirationDate): array
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $timeExpiration = date_create($expirationDate);
@@ -22,31 +34,57 @@ function getTimeLeft (string $expirationDate): array
     return $timeLeft;
 }
 
-function getTimePassed (string $dateCreate):string
+/**
+ * Получаем сколько прошло времени с определенной даты
+ * @param string $dateCreate Дата
+ * @return string Получаем время с определенной даты. Если прошло меньше минуты запись 'меньше минуты назад';
+ * Если прошло больше минуты и меньше часа, то запись вида 'Количество минут назад';
+ * Если прошло от часа до двух, то запись вида 'Час назад';
+ * Если прошло от часа до 24 часов, то запись вида 'Количество часов назад';
+ * Если прошло от 24 часов, то запись вида '22-08-2022 в 22:10';
+ */
+function getTimePassed(string $dateCreate): string
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $dateCreated = date_create($dateCreate);
     $timePassed = date_diff($dateCreated, $timeNow);
-    $days = $timePassed -> format('%a');
-    $hours = $timePassed -> format('%h');
-    $minutes = $timePassed -> format('%i');
-    if ($days == 0 & $hours == 0 & $minutes == 0 ){
+    $days = $timePassed->format('%a');
+    $hours = $timePassed->format('%h');
+    $minutes = $timePassed->format('%i');
+    if ($days == 0 & $hours == 0 & $minutes == 0) {
         return 'меньше минуты назад';
-    } else if ($days == 0 & $hours == 0 & $minutes > 0){
-        return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
-    } else if ($days == 0 & $hours == 1){
-        return 'Час назад';
-    } else if ($days == 0 & $hours > 1){
-        return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
     } else {
-        return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
+        if ($days == 0 & $hours == 0 & $minutes > 0) {
+            return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
+        } else {
+            if ($days == 0 & $hours == 1) {
+                return 'Час назад';
+            } else {
+                if ($days == 0 & $hours > 1) {
+                    return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
+                } else {
+                    return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i',
+                            strtotime($dateCreate));
+                }
+            }
+        }
     }
 }
-function prepareData (array $data): array
+
+/**
+ * Получаем безопасные данные из массива
+ * @param array $data Массив с данными
+ * @return array Массив с безопасными данными.
+ * Если в массиве присутствует шаг ставки, то он форматируется в вид "40 000 руб"
+ * Если в массиве присутствует дата окончания торгов, то она форматируется в массив [часов осталось, минут осталось]
+ * Если в массиве присутствует текущая цена, то он форматируется в вид "40 000 руб"
+ * Если в массиве присутствует текущая цена, то он форматируется в вид "40 000"
+ */
+function prepareData(array $data): array
 {
-    foreach ($data as $key => $value){
+    foreach ($data as $key => $value) {
         $value = htmlspecialchars($value);
-        switch ($key){
+        switch ($key) {
             case 'bid_step':
                 $value = formatAdPrice(htmlspecialchars($value));
                 break;
@@ -55,10 +93,10 @@ function prepareData (array $data): array
                 break;
             case 'current_price':
                 if (!empty($value)) {
-                    $data['price'] =  formatAdPrice(htmlspecialchars($value), '');
-            } else {
+                    $data['price'] = formatAdPrice(htmlspecialchars($value), '');
+                } else {
                     $data['price'] = formatAdPrice(htmlspecialchars($data['starting_price']), '');
-            }
+                }
                 break;
         }
         $data[$key] = $value;
@@ -66,12 +104,17 @@ function prepareData (array $data): array
     return $data;
 }
 
-function getSafeData (array $data): array
+/**
+ * Получаем безопасные данные из массива
+ * @param array $data Массив с данными
+ * @return array Массив с безопасными данными с помощью функции htmlspecialchars.
+ */
+function getSafeData(array $data): array
 {
     $safeData = [];
     foreach ($data as $key => $value) {
         $safeData[$key] = htmlspecialchars($value);
-        }
+    }
 
     return $safeData;
 }

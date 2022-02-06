@@ -24,14 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $safeData = getSafeData($_POST);
     $errors = validateForm($requiredFields, $safeData);
 
-    if (empty($errors)){
+    if (empty($errors)) {
 
         $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
-        if (!$isEmailCompare){
+        if (!$isEmailCompare) {
             $errors['email'] = 'пользователь с таким email не найден';
         }
 
-        if (comparePassword($CONNECTION, $safeData['email'], $safeData['password'])){
+        if (comparePassword($CONNECTION, $safeData['email'], $safeData['password'])) {
             $_SESSION['user'] = getPersonData($CONNECTION, $safeData['email']);
             header("Location: /index.php");
             $safeData = [];
