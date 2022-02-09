@@ -40,20 +40,20 @@ function sendWinMessage(string $email): array
  */
 function handleWinners(mysqli $link, array $winnerLots): array
 {
-    foreach ($winnerLots as $key => $winnerLot) {
-        $winnerLot[$key] = getSafeData($winnerLot);
-        $winnerLots[$key]['userId'] = getLastBidUserId($link, $winnerLot['id']);
+    foreach ($winnerLots as $winner) {
+        $winner = getSafeData($winner);
+        $winner['userId'] = getLastBidUserId($link, (int)$winner['id']);
+var_dump($winner);
 
-
-        if (!empty($winnerLots[$key]['userId']['email'])) {
+        if (!empty($winner['userId']['email'])) {
             include_template('email.php', [
-                'winnerLots[$key]' => $winnerLots[$key],
+                'winner' => $winner,
             ]);
-            $error = sendWinMessage($winnerLots[$key]['userId']['email']);
+            $error = sendWinMessage($winner['userId']['email']);
 
             if (empty($error)) {
-                insertWinner($link, $winnerLots[$key]['userId']['person_id'],
-                    $winnerLots[$key]['userId']['lot_id']);
+                insertWinner($link, $winner['userId']['person_id'],
+                    $winner['userId']['lot_id']);
             }
         }
 
