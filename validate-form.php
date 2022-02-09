@@ -196,3 +196,25 @@ function comparePassword(mysqli $link, string $email, string $password): bool
     }
     return false;
 }
+
+/**
+ * Получаем результат сравнения пароля и email, который пользователь ввел. Если пароль совпадает с паролем у данного
+ * email получаем true если нет false
+ * @param mysqli $link Соединение с БД
+ * @param string $email Проверяемый email
+ * @param string $password Проверяемый пароль
+ * @param array $errors Изначальный массив с ошибками
+ * @return array Ошибки сравнения пароля и почты
+ */
+function checkLoginData(mysqli $link, string $email, string $password, array $errors): array
+{
+    $isEmailCompare = compareEmail($link, $email);
+    if (!$isEmailCompare) {
+        $errors['email'] = 'пользователь с таким email не найден';
+    }
+
+    if (!comparePassword($link, $email, $password)) {
+        $errors['password'] = 'Вы ввели неверный пароль';
+    }
+    return $errors;
+}

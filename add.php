@@ -27,13 +27,8 @@ if (isset($_SESSION['user'])) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $safeData = getSafeData($_POST);
 
-
         if ($_FILES['lot-img']['size'] > 0) {
-            $fileName = $_FILES['lot-img']['name'];
-            $filePath = __DIR__ . '/uploads/';
-            $imgUrlPost = $filePath . $fileName;
-            move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
-            $imgValue = $filePath . $fileName;
+            $imgValue = getFileName();
         }
 
         $errors = validateForm($requiredFields, $safeData);

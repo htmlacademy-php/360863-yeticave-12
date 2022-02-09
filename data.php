@@ -2,22 +2,21 @@
 require_once('config.php');
 require_once('functions.php');
 
+$title = 'Главная страница';
+$userName = null;
 
+$safeUserData = [];
 if (!empty($_SESSION['user'])) {
     $safeUserData = getSafeData($_SESSION['user']);
-} else {
-    $safeUserData = [];
 }
-
 
 if (isset($_SESSION['user']['name'])) {
     $userName = $_SESSION['user']['name'];
 }
 
+$searchWord = null;
 if (isset($_GET['search'])) {
     $searchWord = htmlspecialchars($_GET['search']);
-} else {
-    $searchWord = null;
 }
 
 $CONNECTION = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
@@ -29,16 +28,13 @@ if ($CONNECTION == false) {
 $categories = getCategories($CONNECTION);
 if (!empty($categories)) {
     foreach ($categories as $key => $category) {
-        $categories[$key]['sectionClass'] = '';
-    }
-    foreach ($categories as $key => $category) {
         $categories[$key] = getSafeData($category);
+        $categories[$key]['sectionClass'] = '';
         if (!empty($_POST['category'])) {
             $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
         }
     }
 }
-
 
 /**
  * Получаем все активные объявления
@@ -542,13 +538,3 @@ WHERE id = ?
     }
 }
 
-
-
-$is_auth = rand(0, 1);
-$title = 'Главная страница';
-$userName = null;
-
-$categories = getCategories($CONNECTION);
-foreach ($categories as $key => $category) {
-    $categories[$key] = getSafeData($category);
-};

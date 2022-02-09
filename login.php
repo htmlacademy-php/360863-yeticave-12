@@ -7,7 +7,6 @@ require_once('functions.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
  * @var int $userName - переменная имя пользователя
- * @var int $is_auth - переменная принимает рандомно значения 1 или 0
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  */
@@ -19,30 +18,22 @@ $requiredFields = [
 ];
 $safeData = [];
 $errors = [];
+$errorsLogin = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $safeData = getSafeData($_POST);
     $errors = validateForm($requiredFields, $safeData);
-
-    if (empty($errors)) {
-
-        $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
-        if (!$isEmailCompare) {
-            $errors['email'] = 'пользователь с таким email не найден';
-        }
-
-        if (comparePassword($CONNECTION, $safeData['email'], $safeData['password'])) {
-            $_SESSION['user'] = getPersonData($CONNECTION, $safeData['email']);
-            header("Location: /index.php");
-            $safeData = [];
-        } else {
-            $errors['password'] = 'Вы ввели неверный пароль';
-        }
+    $errorsLogin = checkLoginData($CONNECTION, $safeData['email'], $safeData['password'], $errors);
+    if (empty($errors) && empty($errorsLogin)) {
+        $_SESSION['user'] = getPersonData($CONNECTION, $safeData['email']);
+        header("Location: /index.php");
+        $safeData = [];
     }
 }
 
 $content = include_template('login-temp.php', [
     'errors' => $errors,
+    'errorsLogin' => $errorsLogin,
     'safeData' => $safeData,
     'categories' => $categories,
 
@@ -50,7 +41,6 @@ $content = include_template('login-temp.php', [
 
 print include_template('layout.php', [
     'title' => $title,
-    'is_auth' => $is_auth,
     'userName' => $userName,
     'content' => $content,
     'categories' => $categories,

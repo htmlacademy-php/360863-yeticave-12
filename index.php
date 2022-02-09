@@ -13,11 +13,7 @@ require_once('getwinner.php');
 
 
 $ads = getAds($CONNECTION);
-foreach ($ads as $key => $ad) {
-    $ads[$key] = getSafeData($ad);
-    $ads[$key]['starting_price'] = formatAdPrice($ad['starting_price']);
-    $ads[$key]['timeLeft'] = getTimeLeft($ad['completion_date']);
-};
+$ads = formatAdsCardsData($ads);
 
 $content = include_template('main.php', [
     'categories' => $categories,

@@ -186,3 +186,31 @@ function getPaginationData(int $adsCount, array $pagination, array $getData): ar
 
     return $pagination;
 }
+
+/**
+ * Получаем адрес временно загруженного файла
+ * @return string Адрес файла
+ */
+function getFileName(): string
+{
+    $fileName = $_FILES['lot-img']['name'];
+    $filePath = __DIR__ . '/uploads/';
+    move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
+    return $filePath . $fileName;
+}
+
+/**
+ * Форматирует данные для карточки объявлений
+ * @param array $ads Данные для карточек объявлений
+ * @return array Отформатированные данные для карточки объявлений
+ */
+function formatAdsCardsData(array $ads): array
+{
+    foreach ($ads as $key => $ad) {
+        $ads[$key] = getSafeData($ad);
+        $ads[$key]['starting_price'] = formatAdPrice($ad['starting_price']);
+        $ads[$key]['timeLeft'] = getTimeLeft($ad['completion_date']);
+    }
+
+    return $ads;
+}
