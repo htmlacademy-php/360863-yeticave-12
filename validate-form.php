@@ -78,19 +78,18 @@ function validateForm(array $requiredFields, array $safeData): array
         }
     }
 
+
     if (!empty($safeData['lot-rate'])) {
-        if ($safeData['lot-rate'] === '0') {
-            if ((filter_var($safeData['lot-rate'],
-                        FILTER_VALIDATE_INT,) === false) || (int)$safeData['lot-rate'] <= 0) {
-                $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
-            }
+        if ((filter_var($safeData['lot-rate'], FILTER_VALIDATE_INT) === false) || (int)$safeData['lot-rate'] <= 0) {
+            $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
         }
     }
+
 
     if (!empty($safeData['lot-step'])) {
         if ($safeData['lot-step'] === '0') {
             if ((filter_var($safeData['lot-step'],
-                        FILTER_VALIDATE_INT,) === false) || (int)$safeData['lot-step'] <= 0) {
+                        FILTER_VALIDATE_INT) === false) || (int)$safeData['lot-step'] <= 0) {
                 $errors['lot-step'] = 'Шаг ставки должен быть числом больше нуля';
             }
         }
