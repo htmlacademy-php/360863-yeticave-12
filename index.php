@@ -6,7 +6,7 @@ require_once('data.php');
 require_once('getwinner.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  */
@@ -26,7 +26,7 @@ $content = include_template('main.php', [
 
 print include_template('layout.php', [
     'title' => $title,
-    'user_name' => $user_name,
+    'userName' => $userName,
     'content' => $content,
     'categories' => $categories,
 ]);

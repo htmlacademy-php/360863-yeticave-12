@@ -1,9 +1,8 @@
 <?php
 require_once('config.php');
 require_once('functions.php');
-$is_auth = rand(0, 1);
-$title = 'Главная страница';
-$user_name = null;
+
+
 if (!empty($_SESSION['user'])) {
     $safeUserData = getSafeData($_SESSION['user']);
 } else {
@@ -12,7 +11,7 @@ if (!empty($_SESSION['user'])) {
 
 
 if (isset($_SESSION['user']['name'])) {
-    $user_name = $_SESSION['user']['name'];
+    $userName = $_SESSION['user']['name'];
 }
 
 if (isset($_GET['search'])) {
@@ -28,16 +27,18 @@ if ($CONNECTION == false) {
 };
 
 $categories = getCategories($CONNECTION);
-foreach ($categories as $key => $category) {
-    $categories[$key]['sectionClass'] = '';
-}
-foreach ($categories as $key => $category) {
-    $categories[$key] = getSafeData($category);
-    if (!empty($_POST['category'])) {
-        $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
+if (!empty($categories)) {
+    foreach ($categories as $key => $category) {
+        $categories[$key]['sectionClass'] = '';
     }
-
+    foreach ($categories as $key => $category) {
+        $categories[$key] = getSafeData($category);
+        if (!empty($_POST['category'])) {
+            $categories[$key]['sectionClass'] = ($_POST['category'] === $category['id']) ? 'selected' : '';
+        }
+    }
 }
+
 
 /**
  * Получаем все активные объявления
@@ -540,3 +541,14 @@ WHERE id = ?
         return [];
     }
 }
+
+
+
+$is_auth = rand(0, 1);
+$title = 'Главная страница';
+$userName = null;
+
+$categories = getCategories($CONNECTION);
+foreach ($categories as $key => $category) {
+    $categories[$key] = getSafeData($category);
+};

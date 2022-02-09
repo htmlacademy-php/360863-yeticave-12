@@ -7,7 +7,7 @@ require_once('helpers.php');
 require_once('validate-form.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  * @var array $safeUserData - массив данных залогиненного юзера
@@ -34,7 +34,7 @@ if (empty($lot['id'])) {
     $lastBidUserId = getLastBidUserId($CONNECTION, $lot['id']);
 
 
-    if (empty($user_name) || strtotime($lot['completion_date']) <= strtotime('now') || (int)$lot['authorId'] == (int)$safeUserData['id'] || (!empty($lastBidUserId['person_id'])) && (int)$safeUserData['id'] == (int)$lastBidUserId['person_id']) {
+    if (empty($userName) || strtotime($lot['completion_date']) <= strtotime('now') || (int)$lot['authorId'] == (int)$safeUserData['id'] || (!empty($lastBidUserId['person_id'])) && (int)$safeUserData['id'] == (int)$lastBidUserId['person_id']) {
         $isTakeBidsVisible = false;
     } else {
         $isTakeBidsVisible = true;
@@ -75,7 +75,7 @@ if (empty($lot['id'])) {
         'categories' => $categories,
         'lot' => $lot,
         'bids' => $bids,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'errors' => $errors,
         'safeData' => $safeData,
         'isTakeBidsVisible' => $isTakeBidsVisible
@@ -85,7 +85,7 @@ if (empty($lot['id'])) {
 
 print include_template('layout.php', [
     'title' => $title,
-    'user_name' => $user_name,
+    'userName' => $userName,
     'content' => $content,
     'categories' => $categories,
 ]);

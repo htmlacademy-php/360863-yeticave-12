@@ -1,4 +1,5 @@
 <?php
+require_once('data.php');
 
 /**
  * Форматируем сумму
@@ -113,6 +114,75 @@ function getSafeData(array $data): array
 }
 
 
+/**
+ * Получаем заголовок для страницы Категории
+ * @param mysqli $link Соединение с БД
+ * @param array $category Массив со значениями категории
+ * @return string Надпись в заголовке H2 для страницы "Категория".
+ */
+function getCategoryMainHeader(int $items_count, array $category): string
+{
+    $pageH2 = 'Все лоты в категории "' . $category['title'] . '"';
+    if ($items_count == 0) {
+        $pageH2 = 'Лоты в категории "' . $category['title'] . '" не найдены';
+    }
+
+    return $pageH2;
+}
 
 
+/**
+ * Форматирует данные в карточке объявлений для отображения на странице Категории
+ * @param array $categoryAds Массив с данными объявлений для выбранной категории
+ * @return array Отформатированный массив с данными объявлениями
+ */
+function formatCategoryAdsCards(array $categoryAds): array
+{
+    foreach ($categoryAds as $key => $categoryAd) {
 
+        $categoryAds[$key]['starting_price'] = formatAdPrice($categoryAd['starting_price']);
+
+        if (isset($categoryAds[$key]['current_price'])) {
+            $categoryAds[$key]['current_price'] = formatAdPrice($categoryAd['current_price']);
+        }
+        $categoryAds[$key]['timeLeft'] = getTimeLeft($categoryAd['completion_date']);
+
+        $categoryAds[$key]['timerText'] = $categoryAds[$key]['timeLeft']["hoursLeft"] . ':' . $categoryAds[$key]['timeLeft']["minutesLeft"];
+        if (strtotime($categoryAds[$key]['completion_date']) <= strtotime('now')) {
+            $categoryAds[$key]['timerText'] = 'торги окончены';
+        }
+    }
+
+    return $categoryAds;
+}
+
+/**
+ * Получаем данные для пагинации
+ * @param int $adsCount Общее количество объявлений
+ * @param array $pagination Первоначальные данные пагинации
+ * @param array $getData Данные для пагинации из гет запроса
+ * @return array Все данные для отображения пагинации
+ */
+function getPaginationData(int $adsCount, array $pagination, array $getData): array
+{
+    $pagination['curPage'] = 1;
+    if (isset($getData['page'])) {
+        $pagination['curPage'] = (int)$getData['page'];
+    }
+
+    $pagination['pagesCount'] = ceil($adsCount / $pagination['pageItems']);
+    $pagination['offset'] = ($pagination['curPage'] - 1) * $pagination['pageItems'];
+    $pagination['pages'] = range(1, $pagination['pagesCount']);
+
+    $pagination['isLastPageExist'] = true;
+    if ($pagination['curPage'] == $pagination['pagesCount']) {
+        $pagination['isLastPageExist'] = false;
+    }
+
+    $pagination['isFirstPageExist'] = true;
+    if ($pagination['curPage'] == 1) {
+        $pagination['isFirstPageExist'] = false;
+    }
+
+    return $pagination;
+}

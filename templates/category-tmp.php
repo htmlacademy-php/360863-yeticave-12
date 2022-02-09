@@ -36,7 +36,6 @@
                                 </div>
                                 <div class="lot__timer timer <?= ($categoryAd['timeLeft']["hoursLeft"] === '00') ? 'timer--finishing' : ''; ?>">
                                     <?= $categoryAd['timerText']; ?>
-                                    <? /*=$categoryAd['timeLeft']["hoursLeft"] . ':' . $categoryAd['timeLeft']["minutesLeft"];*/ ?>
                                 </div>
                             </div>
                         </div>
@@ -44,22 +43,22 @@
                 <?php endforeach; ?>
             </ul>
         </section>
-        <?php if ($pages_count > 1): ?>
+        <?php if ($pagination['pagesCount'] > 1): ?>
 
             <ul class="pagination-list">
-                <?php if ($isFirstPageExist): ?>
+                <?php if ($pagination['isFirstPageExist']): ?>
                     <li class="pagination-item pagination-item-prev"><a
-                                href="/category.php?page=<?= ($cur_page - 1); ?>&category=<?= $safeData['category']; ?>">Назад</a>
+                                href="/category.php?page=<?= ($pagination['curPage'] - 1); ?>&category=<?= $safeData['category']; ?>">Назад</a>
                     </li>
                 <?php endif; ?>
-                <?php foreach ($pages as $page): ?>
-                    <li class="pagination-item <?php if ($page == $cur_page): ?>pagination__item--active<?php endif; ?>">
+                <?php foreach ($pagination['pages'] as $page): ?>
+                    <li class="pagination-item <?php if ($page == $pagination['curPage']): ?>pagination__item--active<?php endif; ?>">
                         <a href="/category.php?page=<?= $page; ?>&category=<?= $safeData['category']; ?>"><?= $page; ?></a>
                     </li>
                 <?php endforeach; ?>
-                <?php if ($isLastPageExist): ?>
+                <?php if ($pagination['isLastPageExist']): ?>
                     <li class="pagination-item pagination-item-next"><a
-                                href="/category.php?page=<?= ($cur_page + 1); ?>&category=<?= $safeData['category']; ?>">Вперед</a>
+                                href="/category.php?page=<?= ($pagination['curPage'] + 1); ?>&category=<?= $safeData['category']; ?>">Вперед</a>
                     </li>
                 <?php endif; ?>
             </ul>

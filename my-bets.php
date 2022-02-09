@@ -6,7 +6,7 @@ require_once('data.php');
 require_once('helpers.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  * @var array $safeUserData - массив данных залогиненного юзера
@@ -42,7 +42,7 @@ if (!isset($_SESSION['user'])) {
 
     $content = include_template('bets-tmp.php', [
         'categories' => $categories,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'safeData' => $safeData,
         'userBids' => $userBids,
     ]);
@@ -50,7 +50,7 @@ if (!isset($_SESSION['user'])) {
 
     print include_template('layout.php', [
         'title' => $title,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'content' => $content,
         'categories' => $categories,
     ]);

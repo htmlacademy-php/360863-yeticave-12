@@ -6,7 +6,7 @@ require_once('validate-form.php');
 require_once('config.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - список категорий
  */
@@ -57,7 +57,7 @@ if (isset($_SESSION['user'])) {
 
     print include_template('layout.php', [
         'title' => $title,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'content' => $content,
         'categories' => $categories,
     ]);

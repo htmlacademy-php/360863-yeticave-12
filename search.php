@@ -5,7 +5,7 @@ require_once('config.php');
 require_once('data.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  * @var string $searchWord - Поисковой запрос
@@ -16,6 +16,8 @@ if (empty($safeData['search'])) {
     http_response_code(404);
 } else {
     $safeDataSearch = trim($safeData['search']);
+    $allAdsResult = getSearchAdsCount($CONNECTION, $safeDataSearch);
+    $items_count = $allAdsResult['count'];
 
     if (isset($safeData['page'])) {
         $cur_page = (int)$safeData['page'];
@@ -23,9 +25,6 @@ if (empty($safeData['search'])) {
         $cur_page = 1;
     }
     $page_items = 9;
-
-    $allAdsResult = getSearchAdsCount($CONNECTION, $safeDataSearch);
-    $items_count = $allAdsResult['count'];
 
     $pages_count = ceil($items_count / $page_items);
     $offset = ($cur_page - 1) * $page_items;
@@ -83,7 +82,7 @@ if (empty($safeData['search'])) {
 
 print include_template('layout.php', [
     'title' => $title,
-    'user_name' => $user_name,
+    'userName' => $userName,
     'content' => $content,
     'categories' => $categories,
     'searchWord' => $searchWord,
