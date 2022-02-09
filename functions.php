@@ -53,11 +53,11 @@ function getTimePassed(string $dateCreate): string
     $minutes = $timePassed->format('%i');
     if ($days == 0 & $hours == 0 & $minutes == 0 ) {
         return 'меньше минуты назад';
-    } else if ($days == 0 & $hours == 0 & $minutes > 0) {
+    } elseif ($days == 0 & $hours == 0 & $minutes > 0) {
         return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
-    } else if ($days == 0 & $hours == 1) {
+    } elseif ($days == 0 & $hours == 1) {
         return 'Час назад';
-    } else if ($days == 0 & $hours > 1) {
+    } elseif ($days == 0 & $hours > 1) {
         return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
     } else {
         return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
