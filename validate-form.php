@@ -68,10 +68,8 @@ function validateForm(array $requiredFields, array $safeData): array
     }
 
     if (!empty($_FILES)) {
-        if ($_FILES['lot-img']["size"] > 0) {
-            if (!in_array(mime_content_type($imgUrlPost), $acceptableImageMime)) {
-                $errors['lot-img'] = 'Формат изображения может быть только: jpeg, jpg или png';
-            }
+        if (!in_array(mime_content_type($imgUrlPost), $acceptableImageMime)) {
+            $errors['lot-img'] = 'Формат изображения может быть только: jpeg, jpg или png';
         }
         if ($_FILES['lot-img']["size"] === 0 && empty($_POST['img'])) {
             $errors['lot-img'] = 'Добавьте изображение для лота';
@@ -79,20 +77,12 @@ function validateForm(array $requiredFields, array $safeData): array
     }
 
 
-    if (!empty($safeData['lot-rate'])) {
-        if ((filter_var($safeData['lot-rate'], FILTER_VALIDATE_INT) === false) || (int)$safeData['lot-rate'] <= 0) {
-            $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
-        }
+    if (isset($safeData['lot-rate']) && (empty($safeData['lot-rate']) || (int)$safeData['lot-rate'] < 0 || (filter_var($safeData['lot-rate'], FILTER_VALIDATE_INT) === false))) {
+                    $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
     }
 
-
-    if (!empty($safeData['lot-step'])) {
-        if ($safeData['lot-step'] === '0') {
-            if ((filter_var($safeData['lot-step'],
-                        FILTER_VALIDATE_INT) === false) || (int)$safeData['lot-step'] <= 0) {
+    if (isset($safeData['lot-step']) && (empty($safeData['lot-step']) || (int)$safeData['lot-step'] < 0 || (filter_var($safeData['lot-step'], FILTER_VALIDATE_INT) === false))) {
                 $errors['lot-step'] = 'Шаг ставки должен быть числом больше нуля';
-            }
-        }
     }
 
     if (!empty($safeData['lot-date'])) {
@@ -118,7 +108,6 @@ function validateForm(array $requiredFields, array $safeData): array
         }
     }
 
-
     return $errors;
 }
 
@@ -143,13 +132,8 @@ function validateCost(array $requiredFields, array $safeData, int $lotPrice, int
         }
     }
 
-    if (!empty($safeData['cost'])) {
-        if ($safeData['cost'] !== '0') {
-            if ((filter_var($safeData['cost'],
-                        FILTER_VALIDATE_INT,) === false) || (int)$safeData['cost'] <= 0 || (int)$safeData['cost'] < ($lotPrice + $bidStep)) {
-                $errors['cost'] = 'Ставка должна быть больше или равно, чем текущая цена лота + шаг ставки.';
-            }
-        }
+    if (isset($safeData['cost']) && (empty($safeData['cost']) || (int)$safeData['cost'] < 0) || (int)$safeData['cost'] < ($lotPrice + $bidStep) || (filter_var($safeData['cost'], FILTER_VALIDATE_INT) === false)) {
+        $errors['cost'] = 'Ставка должна быть больше или равно, чем текущая цена лота + шаг ставки.';
     }
     return $errors;
 }

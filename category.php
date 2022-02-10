@@ -30,7 +30,7 @@ if (empty($category)) {
     $pageH2 = getCategoryMainHeader($itemsCount, $category);
     $pagination = getPaginationData($itemsCount, $pagination, $safeData);
     $categoryAds = getCategoryAdsForPage($CONNECTION, $safeData['category'], $pagination['pageItems'], $pagination['offset']);
-    $categoryAds = formatCategoryAdsCards($categoryAds);
+    $categoryAds = formatDataAdsCards($categoryAds);
 
     $content = include_template('category-tmp.php', [
         'categories' => $categories,

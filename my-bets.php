@@ -16,28 +16,8 @@ if (!isset($_SESSION['user'])) {
 } else {
     $safeData = getSafeData($_REQUEST);
     $userBids = getUserBids($CONNECTION, (int)$safeUserData['id']);
-    foreach ($userBids as $key => $userBid) {
-        $userBids[$key] = prepareData($userBid);
-    }
-
-    foreach ($userBids as $key => $userBid) {
-        $userBids[$key]['time_passed'] = getTimePassed($userBid['bidDate']);
-        $userBids[$key]['lastBidUserId'] = getLastBidUserId($CONNECTION, (int)$userBid['lotId']);
-        if ($userBids[$key]['timeLeft']["hoursLeft"] === '00') {
-            $userBids[$key]['timerClass'] = 'timer--finishing';
-            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
-
-        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] == (int)$userBids[$key]['person_id']) {
-            $userBids[$key]['timerClass'] = 'timer--win';
-            $userBids[$key]['timerText'] = 'Ставка выиграла';
-            $userBids[$key]['userContacts'] = $userBid['contacts'];
-        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] != (int)$userBids[$key]['person_id']) {
-            $userBids[$key]['timerClass'] = 'timer--end';
-            $userBids[$key]['timerText'] = 'Торги окончены';
-        } else {
-            $userBids[$key]['timerClass'] = ' ';
-            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
-        }
+    if (!empty($userBids)) {
+        $userBids = formatBetsData($CONNECTION, $userBids);
     }
 
     $content = include_template('bets-tmp.php', [

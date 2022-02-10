@@ -11,10 +11,8 @@ require_once('getwinner.php');
  * @var array $categories - массив для вывода категорий
  */
 
-
 $ads = getAds($CONNECTION);
 $ads = formatAdsCardsData($ads);
-
 $content = include_template('main.php', [
     'categories' => $categories,
     'ads' => $ads,

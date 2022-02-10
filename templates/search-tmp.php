@@ -33,7 +33,7 @@
                                     <?php endif; ?>
                                 </div>
                                 <div class="lot__timer timer <?= ($searchAd['timeLeft']["hoursLeft"] === '00') ? 'timer--finishing' : ''; ?>">
-                                    <?= $searchAd['timeLeft']["hoursLeft"] . ':' . $searchAd['timeLeft']["minutesLeft"]; ?>
+                                    <?= $searchAd['timerText']; ?>
                                 </div>
                             </div>
                         </div>
@@ -41,22 +41,22 @@
                 <?php endforeach; ?>
             </ul>
         </section>
-        <?php if ($pages_count > 1): ?>
+        <?php if ($pagination['pagesCount'] > 1): ?>
 
             <ul class="pagination-list">
-                <?php if ($isFirstPageExist): ?>
+                <?php if ($pagination['isFirstPageExist']): ?>
                     <li class="pagination-item pagination-item-prev"><a
-                                href="/search.php?page=<?= ($cur_page - 1); ?>&search=<?= $safeDataSearch; ?>&find=Найти">Назад</a>
+                                href="/search.php?page=<?= ($pagination['curPage'] - 1); ?>&search=<?= $safeDataSearch; ?>&find=Найти">Назад</a>
                     </li>
                 <?php endif; ?>
-                <?php foreach ($pages as $page): ?>
-                    <li class="pagination-item <?php if ($page == $cur_page): ?>pagination__item--active<?php endif; ?>">
+                <?php foreach ($pagination['pages'] as $page): ?>
+                    <li class="pagination-item <?php if ($page == $pagination['curPage']): ?>pagination__item--active<?php endif; ?>">
                         <a href="/search.php?page=<?= $page; ?>&search=<?= $safeDataSearch; ?>"><?= $page; ?></a>
                     </li>
                 <?php endforeach; ?>
-                <?php if ($isLastPageExist): ?>
+                <?php if ($pagination['isLastPageExist']): ?>
                     <li class="pagination-item pagination-item-next"><a
-                                href="/search.php?page=<?= ($cur_page + 1); ?>&search=<?= $safeDataSearch; ?>&find=Найти">Вперед</a>
+                                href="/search.php?page=<?= ($pagination['curPage'] + 1); ?>&search=<?= $safeDataSearch; ?>&find=Найти">Вперед</a>
                     </li>
                 <?php endif; ?>
             </ul>

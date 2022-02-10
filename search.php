@@ -15,69 +15,27 @@ if (empty($safeData['search'])) {
     $content = include_template('404-error.php');
     http_response_code(404);
 } else {
+    $pagination = [
+        'pageItems' => 9,
+    ];
     $safeDataSearch = trim($safeData['search']);
     $allAdsResult = getSearchAdsCount($CONNECTION, $safeDataSearch);
-    $items_count = $allAdsResult['count'];
-
-    if (isset($safeData['page'])) {
-        $cur_page = (int)$safeData['page'];
-    } else {
-        $cur_page = 1;
-    }
-    $page_items = 9;
-
-    $pages_count = ceil($items_count / $page_items);
-    $offset = ($cur_page - 1) * $page_items;
-    $pages = range(1, $pages_count);
-
-    if ($cur_page == $pages_count) {
-        $isLastPageExist = false;
-    } else {
-        $isLastPageExist = true;
-    }
-
-    if ($cur_page == 1) {
-        $isFirstPageExist = false;
-    } else {
-        $isFirstPageExist = true;
-    }
-
-    $searchAds = getSearchAdsForPage($CONNECTION, $safeDataSearch, $page_items, $offset);
-
-    foreach ($searchAds as $key => $searchAd) {
-        $searchAds[$key]['starting_price'] = formatAdPrice($searchAd['starting_price']);
-        if (isset($searchAds[$key]['current_price'])) {
-            $searchAds[$key]['current_price'] = formatAdPrice($searchAd['current_price']);
-        }
-        $searchAds[$key]['timeLeft'] = getTimeLeft($searchAd['completion_date']);
-    }
-
+    $itemsCount = $allAdsResult['count'];
+    $pagination = getPaginationData($itemsCount, $pagination, $safeData);
+    $searchAds = getSearchAdsForPage($CONNECTION, $safeDataSearch, $pagination['pageItems'], $pagination['offset']);
+    $searchAds = formatDataAdsCards ($searchAds);
+    $searchResult = "Результаты поиска по запросу «{$safeDataSearch}»";
     if (empty($searchAds)) {
         $searchResult = 'Ничего не найдено по вашему запросу';
-    } else {
-        $searchResult = "Результаты поиска по запросу «{$safeDataSearch}»";
     }
 
-
-    if (isset($safeData['page']) && $safeData['page'] > $pages_count) {
-        $content = include_template('404-error.php', [
-            'categories' => $categories,
-        ]);
-        http_response_code(404);
-    } else {
-        $content = include_template('search-tmp.php', [
-            'categories' => $categories,
-            'safeDataSearch' => $safeDataSearch,
-            'searchResult' => $searchResult,
-            'searchAds' => $searchAds,
-            'pages_count' => $pages_count,
-            'pages' => $pages,
-            'cur_page' => $cur_page,
-            'isFirstPageExist' => $isFirstPageExist,
-            'isLastPageExist' => $isLastPageExist,
-        ]);
-    }
-
+    $content = include_template('search-tmp.php', [
+        'categories' => $categories,
+        'safeDataSearch' => $safeDataSearch,
+        'pagination' => $pagination,
+        'searchResult' => $searchResult,
+        'searchAds' => $searchAds,
+    ]);
 }
 
 print include_template('layout.php', [

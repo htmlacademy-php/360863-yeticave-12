@@ -111,7 +111,7 @@
             </div>
         </div>
 
-        <?php if (count($errors) > 0): ?>
+        <?php if (!empty($errors)): ?>
             <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
         <?php endif; ?>
 

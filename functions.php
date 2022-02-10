@@ -13,8 +13,6 @@ function formatAdPrice(string $price, string $currency = ' ₽'): string
     return $formatedPrice . $currency;
 }
 
-;
-
 /**
  * Получаем сколько осталось времени до окончания торгов
  * @param string $expirationDate Дата завершения торгов из БД
@@ -130,13 +128,12 @@ function getCategoryMainHeader(int $items_count, array $category): string
     return $pageH2;
 }
 
-
 /**
  * Форматирует данные в карточке объявлений для отображения на странице Категории
  * @param array $categoryAds Массив с данными объявлений для выбранной категории
  * @return array Отформатированный массив с данными объявлениями
  */
-function formatCategoryAdsCards(array $categoryAds): array
+function formatDataAdsCards(array $categoryAds): array
 {
     foreach ($categoryAds as $key => $categoryAd) {
 
@@ -213,4 +210,57 @@ function formatAdsCardsData(array $ads): array
     }
 
     return $ads;
+}
+
+/**
+ * Форматирует данные для ставок
+ * @param array  $bids Данные для ставок
+ * @return array Отформатированные данные для карточки объявлений
+ */
+function formatBidsData(array $bids): array
+{
+    foreach ($bids as $key => $bid) {
+        $bids[$key] = getSafeData($bid);
+        $bids[$key]['sum'] = formatAdPrice(htmlspecialchars($bid['sum']));
+        $bids[$key]['time_passed'] = getTimePassed($bid['date_created_at']);
+    };
+
+    return $bids;
+}
+
+
+/**
+ * Форматирует данные для ставок
+ * @param mysqli $link Соединение с БД
+ * @param array $userBids Данные ставок
+ * @return array Отформатированные данные для карточки объявлений
+ */
+function formatBetsData(mysqli $link, array $userBids): array
+{
+    foreach ($userBids as $key => $userBid) {
+        $userBids[$key] = prepareData($userBid);
+    }
+
+    foreach ($userBids as $key => $userBid) {
+
+        $userBids[$key]['time_passed'] = getTimePassed($userBid['bidDate']);
+        $userBids[$key]['lastBidUserId'] = getLastBidUserId($link, (int)$userBid['lotId']);
+        if ($userBids[$key]['timeLeft']["hoursLeft"] === '00') {
+            $userBids[$key]['timerClass'] = 'timer--finishing';
+            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
+
+        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] == (int)$userBids[$key]['person_id']) {
+            $userBids[$key]['timerClass'] = 'timer--win';
+            $userBids[$key]['timerText'] = 'Ставка выиграла';
+            $userBids[$key]['userContacts'] = $userBid['contacts'];
+        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] != (int)$userBids[$key]['person_id']) {
+            $userBids[$key]['timerClass'] = 'timer--end';
+            $userBids[$key]['timerText'] = 'Торги окончены';
+        } else {
+            $userBids[$key]['timerClass'] = ' ';
+            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
+        }
+    }
+
+    return $userBids;
 }

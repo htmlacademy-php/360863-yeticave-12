@@ -43,7 +43,6 @@ function handleWinners(mysqli $link, array $winnerLots): array
     foreach ($winnerLots as $winner) {
         $winner = getSafeData($winner);
         $winner['userId'] = getLastBidUserId($link, (int)$winner['id']);
-var_dump($winner);
 
         if (!empty($winner['userId']['email'])) {
             include_template('email.php', [

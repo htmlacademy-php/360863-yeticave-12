@@ -86,7 +86,7 @@ function getCategories(mysqli $link): array
  * @param mysqli $link Соединение с БД
  * @return array Массив данных лота
  */
-function getLot(mysqli $link): array
+function getLot(mysqli $link, int $id): array
 {
     try {
         $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step, author_id as authorId
@@ -95,10 +95,7 @@ JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE lot.id = ?
 GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_date, img, bid_step";
-        $id = (int)$_GET['id'];
-        if (!$id) {
-            throw new Error('id должен существовать, а он равен:' . ' ' . $id);
-        }
+
         $idWithoutChars = preg_replace('/[^0-9]/', '', $id);
         if (strlen($id) !== strlen($idWithoutChars)) {
             throw new Error('id должен содержать только числа');
@@ -441,8 +438,7 @@ JOIN category on category.id = lot.category_id
 JOIN person on person.id = lot.author_id
 LEFT JOIN bid on bid.lot_id = lot.id
 WHERE bid.person_id = ?
-GROUP BY bid.lot_id, bid.person_id
-";
+GROUP BY bid.lot_id, bid.person_id";
 
         $stmt = mysqli_prepare($link, $sql_bids);
         if ($stmt === false) {
@@ -472,8 +468,7 @@ FROM bid
 JOIN person on person.id = bid.person_id
 WHERE bid.lot_id = ?
 ORDER BY bid.date_created_at DESC
-LIMIT 1
-";
+LIMIT 1";
 
         $stmt = mysqli_prepare($link, $sql_bid);
         if ($stmt === false) {
@@ -523,8 +518,7 @@ function insertWinner(mysqli $link, int $winnerId, int $lotId): array
 
         $sql_update_person = "UPDATE lot 
 SET winner_id = ?
-WHERE id = ?
-";
+WHERE id = ?";
 
         $stmt_update_person = mysqli_prepare($link, $sql_update_person);
         if ($stmt_update_person === false) {
