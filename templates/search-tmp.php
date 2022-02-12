@@ -50,7 +50,7 @@
                     </li>
                 <?php endif; ?>
                 <?php foreach ($pagination['pages'] as $page): ?>
-                    <li class="pagination-item <?php if ($page == $pagination['curPage']): ?>pagination__item--active<?php endif; ?>">
+                    <li class="pagination-item <?php if ($page === $pagination['curPage']): ?>pagination__item--active<?php endif; ?>">
                         <a href="/search.php?page=<?= $page; ?>&search=<?= $safeDataSearch; ?>"><?= $page; ?></a>
                     </li>
                 <?php endforeach; ?>

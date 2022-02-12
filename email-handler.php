@@ -37,25 +37,25 @@ function sendWinMessage(string $email): array
  * Обрабатываем лоты в которых истек срок
  * @param mysqli $link Соединение с БД
  * @param array $winnerLots Массив с лотами, в которых закончилось время и есть победители
+ * @return array Пустой массив
  */
 function handleWinners(mysqli $link, array $winnerLots): array
 {
     foreach ($winnerLots as $winner) {
         $winner = getSafeData($winner);
         $winner['userId'] = getLastBidUserId($link, (int)$winner['id']);
-
-        if (!empty($winner['userId']['email'])) {
-            include_template('email.php', [
-                'winner' => $winner,
-            ]);
-            $error = sendWinMessage($winner['userId']['email']);
-
-            if (empty($error)) {
-                insertWinner($link, $winner['userId']['person_id'],
-                    $winner['userId']['lot_id']);
-            }
+        if (empty($winner['userId']['email'])){
+            return [];
         }
+        include_template('email.php', [
+            'winner' => $winner,
+        ]);
+        $error = sendWinMessage($winner['userId']['email']);
 
+        if (empty($error)) {
+            insertWinner($link, $winner['userId']['person_id'],
+                $winner['userId']['lot_id']);
+        }
     }
     return [];
 }

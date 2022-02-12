@@ -22,9 +22,19 @@ function getTimeLeft(string $expirationDate): array
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $timeExpiration = date_create($expirationDate);
-    $intervalHours = str_pad(+date_interval_format(date_diff($timeNow, $timeExpiration),
-            "%a") * 24 + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H"), 2, "0", STR_PAD_LEFT);
-    $intervalMinutes = str_pad(date_interval_format(date_diff($timeNow, $timeExpiration), "%i"), 2, "0", STR_PAD_LEFT);
+    $intervalHours = str_pad(
+        +date_interval_format(date_diff($timeNow, $timeExpiration), "%a") * 24
+        + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H"),
+        2,
+        "0",
+        STR_PAD_LEFT
+    );
+    $intervalMinutes = str_pad(
+        date_interval_format(date_diff($timeNow, $timeExpiration), "%i"),
+        2,
+        "0",
+        STR_PAD_LEFT
+    );
     $timeLeft = [
         'hoursLeft' => $intervalHours,
         'minutesLeft' => $intervalMinutes,
@@ -248,12 +258,15 @@ function formatBetsData(mysqli $link, array $userBids): array
         if ($userBids[$key]['timeLeft']["hoursLeft"] === '00') {
             $userBids[$key]['timerClass'] = 'timer--finishing';
             $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
-
-        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] == (int)$userBids[$key]['person_id']) {
+        } elseif (
+            strtotime($userBids[$key]['completion_date']) <= strtotime("now")
+            && (int)$userBids[$key]['lastBidUserId']['person_id'] == (int)$userBids[$key]['person_id']) {
             $userBids[$key]['timerClass'] = 'timer--win';
             $userBids[$key]['timerText'] = 'Ставка выиграла';
             $userBids[$key]['userContacts'] = $userBid['contacts'];
-        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] != (int)$userBids[$key]['person_id']) {
+        } elseif (
+            strtotime($userBids[$key]['completion_date']) <= strtotime("now")
+            && (int)$userBids[$key]['lastBidUserId']['person_id'] != (int)$userBids[$key]['person_id']) {
             $userBids[$key]['timerClass'] = 'timer--end';
             $userBids[$key]['timerText'] = 'Торги окончены';
         } else {

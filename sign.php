@@ -25,8 +25,8 @@ if (isset($_SESSION['user'])) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $safeData = getSafeData($_POST);
         $errors = validateForm($requiredFields, $safeData);
-
         $isEmailCompare = compareEmail($CONNECTION, $safeData['email']);
+
         if ($isEmailCompare) {
             $errors['email'] = 'пользователь с таким email уже зарегистрирован';
         }

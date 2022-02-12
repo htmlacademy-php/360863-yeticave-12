@@ -12,7 +12,9 @@ require_once('data.php');
  */
 $safeData = getSafeData($_REQUEST);
 if (empty($safeData['search'])) {
-    $content = include_template('404-error.php');
+    $content = include_template('404-error.php', [
+        'categories' => $categories,
+    ]);
     http_response_code(404);
 } else {
     $pagination = [

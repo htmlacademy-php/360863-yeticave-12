@@ -32,7 +32,13 @@ if (empty($safeData['id'])) {
         $lot = prepareData($lot);
         $lastBidUserId = getLastBidUserId($CONNECTION, $lot['id']);
         $isTakeBidsVisible = true;
-        if (empty($userName) || strtotime($lot['completion_date']) <= strtotime('now') || (int)$lot['authorId'] == (int)$safeUserData['id'] || (!empty($lastBidUserId['person_id'])) && (int)$safeUserData['id'] == (int)$lastBidUserId['person_id']) {
+        if (
+            empty($userName)
+            || strtotime($lot['completion_date']) <= strtotime('now')
+            || (int)$lot['authorId'] == (int)$safeUserData['id']
+            || (!empty($lastBidUserId['person_id']))
+            && (int)$safeUserData['id'] == (int)$lastBidUserId['person_id']
+        ) {
             $isTakeBidsVisible = false;
         }
 

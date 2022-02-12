@@ -44,13 +44,22 @@ if (!empty($categories)) {
 function getAds(mysqli $link): array
 {
     try {
-        $sql_ads = "SELECT lot.id as lotId, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price
+        $sql_ads = "
+SELECT 
+       lot.id as lotId,
+       lot.title as title,
+       starting_price,
+       completion_date,
+       img,
+       category.title as category,
+       MAX(bid.sum) as current_price
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE completion_date > now()
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC";
+ORDER BY lot.date_created_at DESC
+";
 
         $object_result_ads = mysqli_query($link, $sql_ads);
         if (!$object_result_ads) {
@@ -89,12 +98,24 @@ function getCategories(mysqli $link): array
 function getLot(mysqli $link, int $id): array
 {
     try {
-        $sql_lot = "SELECT lot.id as id, lot.title as title, lot.description as description, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, bid_step, author_id as authorId
+        $sql_lot = "
+SELECT 
+       lot.id as id,
+       lot.title as title,
+       lot.description as description,
+       starting_price,
+       completion_date,
+       img,
+       category.title as category,
+       MAX(bid.sum) as current_price,
+       bid_step,
+       author_id as authorId
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE lot.id = ?
-GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_date, img, bid_step";
+GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_date, img, bid_step
+";
 
         $idWithoutChars = preg_replace('/[^0-9]/', '', $id);
         if (strlen($id) !== strlen($idWithoutChars)) {
@@ -125,11 +146,13 @@ GROUP BY lot.id, lot.id, lot.title, lot.description, starting_price, completion_
 function getBids(mysqli $link): array
 {
     try {
-        $sql_bids = "SELECT bid.date_created_at, sum, person.name as name
+        $sql_bids = "
+SELECT bid.date_created_at, sum, person.name as name
 FROM bid
 JOIN person ON person_id = person.id
 WHERE lot_id = ?
-ORDER BY sum DESC";
+ORDER BY sum DESC
+";
 
         $id = (int)$_GET['id'];
         if (!$id) {
@@ -193,9 +216,17 @@ completion_date = ?";
         if ($stmt_insert_lot === false) {
             throw new Error('Ошибка подготовленного выражения:' . ' ' . mysqli_error($link));
         }
-        mysqli_stmt_bind_param($stmt_insert_lot, 'sssssiis', $safeData['lot-name'], $authorID, $safeData['category'],
-            $safeData['message'], $imgUrlPost,
-            $safeData['lot-rate'], $safeData['lot-step'], $safeData['lot-date']);
+        mysqli_stmt_bind_param(
+            $stmt_insert_lot,
+            'sssssiis',
+            $safeData['lot-name'],
+            $authorID,
+            $safeData['category'],
+            $safeData['message'],
+            $imgUrlPost,
+            $safeData['lot-rate'],
+            $safeData['lot-step'],
+            $safeData['lot-date']);
         mysqli_stmt_execute($stmt_insert_lot);
         return [];
     } catch (Error $error) {
@@ -283,13 +314,23 @@ WHERE MATCH (lot.title, lot.description) AGAINST(?)";
 function getSearchAdsForPage(mysqli $link, string $searchWord, int $page_items, int $offset): array
 {
     try {
-        $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+        $sql_search = "
+SELECT
+       lot.id as id,
+       lot.title as title,
+       starting_price,
+       completion_date,
+       img,
+       category.title as category,
+       MAX(bid.sum) as current_price,
+       count(bid.id) as bid_sum
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE MATCH (lot.title, lot.description) AGAINST(?)
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?
+";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {
@@ -373,13 +414,23 @@ WHERE category.symbolic_code = ? AND lot.completion_date > now()";
 function getCategoryAdsForPage(mysqli $link, string $category, int $page_items, int $offset): array
 {
     try {
-        $sql_search = "SELECT lot.id as id, lot.title as title, starting_price, completion_date, img, category.title as category, MAX(bid.sum) as current_price, count(bid.id) as bid_sum
+        $sql_search = "
+SELECT 
+       lot.id as id,
+       lot.title as title,
+       starting_price,
+       completion_date,
+       img,
+       category.title as category,
+       MAX(bid.sum) as current_price,
+       count(bid.id) as bid_sum
 FROM lot
 JOIN category ON category.id = lot.category_id
 LEFT JOIN bid ON lot.id = bid.lot_id
 WHERE category.symbolic_code = ? AND lot.completion_date > now()
 GROUP BY lot.id, lot.title, starting_price, completion_date, img, lot.date_created_at
-ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?";
+ORDER BY lot.date_created_at DESC LIMIT ? OFFSET ?
+";
 
         $stmt = mysqli_prepare($link, $sql_search);
         if ($stmt === false) {
@@ -432,13 +483,25 @@ function getUserBids(mysqli $link, int $userId): array
 {
     try {
         $sql_bids = "
-SELECT MAX(bid.sum) as current_price, bid.lot_id as lotId, bid.person_id, MAX(bid.date_created_at) as bidDate, lot.title as title, lot.completion_date completion_date, category.title as categoryTitle, person.email as email, person.name as name, person.contacts as contacts, lot.img as img
+SELECT 
+       MAX(bid.sum) as current_price,
+       bid.lot_id as lotId,
+       bid.person_id,
+       MAX(bid.date_created_at) as bidDate,
+       lot.title as title,
+       lot.completion_date completion_date,
+       category.title as categoryTitle,
+       person.email as email,
+       person.name as name,
+       person.contacts as contacts,
+       lot.img as img
 FROM lot
 JOIN category on category.id = lot.category_id
 JOIN person on person.id = lot.author_id
 LEFT JOIN bid on bid.lot_id = lot.id
 WHERE bid.person_id = ?
-GROUP BY bid.lot_id, bid.person_id";
+GROUP BY bid.lot_id, bid.person_id
+";
 
         $stmt = mysqli_prepare($link, $sql_bids);
         if ($stmt === false) {

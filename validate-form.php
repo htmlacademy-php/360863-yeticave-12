@@ -77,11 +77,25 @@ function validateForm(array $requiredFields, array $safeData): array
     }
 
 
-    if (isset($safeData['lot-rate']) && (empty($safeData['lot-rate']) || (int)$safeData['lot-rate'] < 0 || (filter_var($safeData['lot-rate'], FILTER_VALIDATE_INT) === false))) {
+    if (
+        isset($safeData['lot-rate'])
+        && (
+            empty($safeData['lot-rate'])
+            || (int)$safeData['lot-rate'] < 0
+            || (filter_var($safeData['lot-rate'], FILTER_VALIDATE_INT) === false)
+        )
+    ) {
                     $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
     }
 
-    if (isset($safeData['lot-step']) && (empty($safeData['lot-step']) || (int)$safeData['lot-step'] < 0 || (filter_var($safeData['lot-step'], FILTER_VALIDATE_INT) === false))) {
+    if (
+        isset($safeData['lot-step'])
+        && (
+            empty($safeData['lot-step'])
+            || (int)$safeData['lot-step'] < 0
+            || (filter_var($safeData['lot-step'], FILTER_VALIDATE_INT) === false)
+        )
+    ) {
                 $errors['lot-step'] = 'Шаг ставки должен быть числом больше нуля';
     }
 
@@ -132,7 +146,12 @@ function validateCost(array $requiredFields, array $safeData, int $lotPrice, int
         }
     }
 
-    if (isset($safeData['cost']) && (empty($safeData['cost']) || (int)$safeData['cost'] < 0) || (int)$safeData['cost'] < ($lotPrice + $bidStep) || (filter_var($safeData['cost'], FILTER_VALIDATE_INT) === false)) {
+    if (
+        isset($safeData['cost'])
+        && (empty($safeData['cost']) || (int)$safeData['cost'] < 0)
+        || (int)$safeData['cost'] < ($lotPrice + $bidStep)
+        || (filter_var($safeData['cost'], FILTER_VALIDATE_INT) === false)
+    ) {
         $errors['cost'] = 'Ставка должна быть больше или равно, чем текущая цена лота + шаг ставки.';
     }
     return $errors;
