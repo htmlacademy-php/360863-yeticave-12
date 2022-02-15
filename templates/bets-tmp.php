@@ -13,6 +13,7 @@
     <section class="rates container">
         <h2>Мои ставки</h2>
         <table class="rates__list">
+            <?php if(!empty($userBids)) : ?>
             <?php foreach ($userBids as $userBid): ?>
                 <tr class="rates__item">
                     <td class="rates__info">
@@ -41,6 +42,7 @@
                     </td>
                 </tr>
             <?php endforeach; ?>
+            <?php endif; ?>
         </table>
     </section>
 </main>
