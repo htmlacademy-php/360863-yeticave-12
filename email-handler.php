@@ -1,11 +1,6 @@
 <?php
 require_once('init.php');
 
-
-/*require 'vendor/autoload.php';*/
-/*require_once('data.php');
-require_once('functions.php');*/
-
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;

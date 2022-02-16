@@ -1,6 +1,5 @@
 <?php
 require_once('init.php');
-/*require_once('data.php');*/
 
 /**
  * Форматируем сумму
