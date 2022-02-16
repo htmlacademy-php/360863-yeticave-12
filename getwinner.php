@@ -1,8 +1,5 @@
 <?php
-
-require_once('data.php');
-require_once('functions.php');
-require_once('email-handler.php');
+require_once('init.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
  */

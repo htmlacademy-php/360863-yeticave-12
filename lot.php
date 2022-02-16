@@ -1,10 +1,5 @@
 <?php
-require_once('helpers.php');
-require_once('functions.php');
-require_once('config.php');
-require_once('data.php');
-require_once('helpers.php');
-require_once('validate-form.php');
+require_once('init.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
  * @var int $userName - переменная имя пользователя
@@ -46,6 +41,7 @@ if (empty($safeData['id'])) {
         $errors = [];
         $lotPrice = (int)str_replace(' ', '', $lot['price']);
         $bidStep = (int)$lot['bid_step'];
+        $lot['min_bid'] = formatAdPrice($bidStep + $lotPrice);
         $requiredFields = [
             'cost',
         ];
@@ -53,7 +49,7 @@ if (empty($safeData['id'])) {
             $bids = formatBidsData($bids);
         }
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors = validateCost($requiredFields, $safeData, $lotPrice, $bidStep);
             if (empty($errors)) {
                 insertBid($CONNECTION, $safeData['cost'], (int)$safeUserData['id'], (int)$lot['id']);

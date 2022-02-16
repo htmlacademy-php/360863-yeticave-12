@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once('init.php');
 
 $_SESSION = [];
 header("Location: /index.php");

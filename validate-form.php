@@ -85,7 +85,7 @@ function validateForm(array $requiredFields, array $safeData): array
             || (filter_var($safeData['lot-rate'], FILTER_VALIDATE_INT) === false)
         )
     ) {
-                    $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
+        $errors['lot-rate'] = 'Цена должна быть числом больше нуля';
     }
 
     if (
@@ -96,7 +96,7 @@ function validateForm(array $requiredFields, array $safeData): array
             || (filter_var($safeData['lot-step'], FILTER_VALIDATE_INT) === false)
         )
     ) {
-                $errors['lot-step'] = 'Шаг ставки должен быть числом больше нуля';
+        $errors['lot-step'] = 'Шаг ставки должен быть числом больше нуля';
     }
 
     if (!empty($safeData['lot-date'])) {
