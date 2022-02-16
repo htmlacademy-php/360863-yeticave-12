@@ -22,7 +22,7 @@ if (isset($_SESSION['user'])) {
     $safeData = [];
     $errors = [];
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $safeData = getSafeData($_POST);
         $errors = validateForm($requiredFields, $safeData);
 

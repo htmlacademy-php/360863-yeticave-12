@@ -30,7 +30,7 @@
                                 <span class="lot-item__cost"><?= $lot['price']; ?></span>
                             </div>
                             <div class="lot-item__min-cost">
-                                Мин. ставка <span><?= $lot['bid_step']; ?></span>
+                                Мин. ставка <span><?= $lot['min_bid']; ?></span>
                             </div>
                         </div>
                         <form class="lot-item__form" action="/lot.php?id=<?= $lot['id']; ?>" method="post"

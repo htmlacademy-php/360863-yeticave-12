@@ -1,4 +1,5 @@
 <?php
+require_once('data.php');
 
 /**
  * Форматируем сумму
@@ -12,8 +13,6 @@ function formatAdPrice(string $price, string $currency = ' ₽'): string
     return $formatedPrice . $currency;
 }
 
-;
-
 /**
  * Получаем сколько осталось времени до окончания торгов
  * @param string $expirationDate Дата завершения торгов из БД
@@ -23,9 +22,19 @@ function getTimeLeft(string $expirationDate): array
 {
     $timeNow = date_create(date("Y-m-d H:i"));
     $timeExpiration = date_create($expirationDate);
-    $intervalHours = str_pad(+date_interval_format(date_diff($timeNow, $timeExpiration),
-            "%a") * 24 + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H"), 2, "0", STR_PAD_LEFT);
-    $intervalMinutes = str_pad(date_interval_format(date_diff($timeNow, $timeExpiration), "%i"), 2, "0", STR_PAD_LEFT);
+    $intervalHours = str_pad(
+        +date_interval_format(date_diff($timeNow, $timeExpiration), "%a") * 24
+        + +date_interval_format(date_diff($timeNow, $timeExpiration), "%H"),
+        2,
+        "0",
+        STR_PAD_LEFT
+    );
+    $intervalMinutes = str_pad(
+        date_interval_format(date_diff($timeNow, $timeExpiration), "%i"),
+        2,
+        "0",
+        STR_PAD_LEFT
+    );
     $timeLeft = [
         'hoursLeft' => $intervalHours,
         'minutesLeft' => $intervalMinutes,
@@ -53,11 +62,11 @@ function getTimePassed(string $dateCreate): string
     $minutes = $timePassed->format('%i');
     if ($days == 0 & $hours == 0 & $minutes == 0 ) {
         return 'меньше минуты назад';
-    } else if ($days == 0 & $hours == 0 & $minutes > 0) {
+    } elseif ($days == 0 & $hours == 0 & $minutes > 0) {
         return $minutes . ' ' . get_noun_plural_form($minutes, 'минута', 'минуты', 'минут') . ' ' . 'назад';
-    } else if ($days == 0 & $hours == 1) {
+    } elseif ($days == 0 & $hours == 1) {
         return 'Час назад';
-    } else if ($days == 0 & $hours > 1) {
+    } elseif ($days == 0 & $hours > 1) {
         return $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' ' . 'назад';
     } else {
         return date('d-m-y', strtotime($dateCreate)) . ' ' . 'в' . ' ' . date('H:i', strtotime($dateCreate));
@@ -110,4 +119,161 @@ function getSafeData(array $data): array
     }
 
     return $safeData;
+}
+
+
+/**
+ * Получаем заголовок для страницы Категории
+ * @param mysqli $link Соединение с БД
+ * @param array $category Массив со значениями категории
+ * @return string Надпись в заголовке H2 для страницы "Категория".
+ */
+function getCategoryMainHeader(int $items_count, array $category): string
+{
+    $pageH2 = 'Все лоты в категории "' . $category['title'] . '"';
+    if ($items_count == 0) {
+        $pageH2 = 'Лоты в категории "' . $category['title'] . '" не найдены';
+    }
+
+    return $pageH2;
+}
+
+/**
+ * Форматирует данные в карточке объявлений для отображения на странице Категории
+ * @param array $categoryAds Массив с данными объявлений для выбранной категории
+ * @return array Отформатированный массив с данными объявлениями
+ */
+function formatDataAdsCards(array $categoryAds): array
+{
+    foreach ($categoryAds as $key => $categoryAd) {
+
+        $categoryAds[$key]['starting_price'] = formatAdPrice($categoryAd['starting_price']);
+
+        if (isset($categoryAds[$key]['current_price'])) {
+            $categoryAds[$key]['current_price'] = formatAdPrice($categoryAd['current_price']);
+        }
+        $categoryAds[$key]['timeLeft'] = getTimeLeft($categoryAd['completion_date']);
+
+        $categoryAds[$key]['timerText'] = $categoryAds[$key]['timeLeft']["hoursLeft"] . ':' . $categoryAds[$key]['timeLeft']["minutesLeft"];
+        if (strtotime($categoryAds[$key]['completion_date']) <= strtotime('now')) {
+            $categoryAds[$key]['timerText'] = 'торги окончены';
+        }
+    }
+
+    return $categoryAds;
+}
+
+/**
+ * Получаем данные для пагинации
+ * @param int $adsCount Общее количество объявлений
+ * @param array $pagination Первоначальные данные пагинации
+ * @param array $getData Данные для пагинации из гет запроса
+ * @return array Все данные для отображения пагинации
+ */
+function getPaginationData(int $adsCount, array $pagination, array $getData): array
+{
+    $pagination['curPage'] = 1;
+    if (isset($getData['page'])) {
+        $pagination['curPage'] = (int)$getData['page'];
+    }
+
+    $pagination['pagesCount'] = ceil($adsCount / $pagination['pageItems']);
+    $pagination['offset'] = ($pagination['curPage'] - 1) * $pagination['pageItems'];
+    $pagination['pages'] = range(1, $pagination['pagesCount']);
+
+    $pagination['isLastPageExist'] = true;
+    if ($pagination['curPage'] == $pagination['pagesCount']) {
+        $pagination['isLastPageExist'] = false;
+    }
+
+    $pagination['isFirstPageExist'] = true;
+    if ($pagination['curPage'] == 1) {
+        $pagination['isFirstPageExist'] = false;
+    }
+
+    return $pagination;
+}
+
+/**
+ * Получаем адрес временно загруженного файла
+ * @return string Адрес файла
+ */
+function getFileName(): string
+{
+    $fileName = $_FILES['lot-img']['name'];
+    $filePath = __DIR__ . '/uploads/';
+    move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
+    return $filePath . $fileName;
+}
+
+/**
+ * Форматирует данные для карточки объявлений
+ * @param array $ads Данные для карточек объявлений
+ * @return array Отформатированные данные для карточки объявлений
+ */
+function formatAdsCardsData(array $ads): array
+{
+    foreach ($ads as $key => $ad) {
+        $ads[$key] = getSafeData($ad);
+        $ads[$key]['starting_price'] = formatAdPrice($ad['starting_price']);
+        $ads[$key]['timeLeft'] = getTimeLeft($ad['completion_date']);
+    }
+
+    return $ads;
+}
+
+/**
+ * Форматирует данные для ставок
+ * @param array  $bids Данные для ставок
+ * @return array Отформатированные данные для карточки объявлений
+ */
+function formatBidsData(array $bids): array
+{
+    foreach ($bids as $key => $bid) {
+        $bids[$key] = getSafeData($bid);
+        $bids[$key]['sum'] = formatAdPrice(htmlspecialchars($bid['sum']));
+        $bids[$key]['time_passed'] = getTimePassed($bid['date_created_at']);
+    };
+
+    return $bids;
+}
+
+
+/**
+ * Форматирует данные для ставок
+ * @param mysqli $link Соединение с БД
+ * @param array $userBids Данные ставок
+ * @return array Отформатированные данные для карточки объявлений
+ */
+function formatBetsData(mysqli $link, array $userBids): array
+{
+    foreach ($userBids as $key => $userBid) {
+        $userBids[$key] = prepareData($userBid);
+    }
+
+    foreach ($userBids as $key => $userBid) {
+
+        $userBids[$key]['time_passed'] = getTimePassed($userBid['bidDate']);
+        $userBids[$key]['lastBidUserId'] = getLastBidUserId($link, (int)$userBid['lotId']);
+        if ($userBids[$key]['timeLeft']["hoursLeft"] === '00') {
+            $userBids[$key]['timerClass'] = 'timer--finishing';
+            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
+        } elseif (
+            strtotime($userBids[$key]['completion_date']) <= strtotime("now")
+            && (int)$userBids[$key]['lastBidUserId']['person_id'] == (int)$userBids[$key]['person_id']) {
+            $userBids[$key]['timerClass'] = 'timer--win';
+            $userBids[$key]['timerText'] = 'Ставка выиграла';
+            $userBids[$key]['userContacts'] = $userBid['contacts'];
+        } elseif (
+            strtotime($userBids[$key]['completion_date']) <= strtotime("now")
+            && (int)$userBids[$key]['lastBidUserId']['person_id'] != (int)$userBids[$key]['person_id']) {
+            $userBids[$key]['timerClass'] = 'timer--end';
+            $userBids[$key]['timerText'] = 'Торги окончены';
+        } else {
+            $userBids[$key]['timerClass'] = ' ';
+            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
+        }
+    }
+
+    return $userBids;
 }

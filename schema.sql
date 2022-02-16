@@ -6,17 +6,17 @@ USE yeticave;
 
 CREATE TABLE IF NOT EXISTS category (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title CHAR(63) NOT NULL UNIQUE,
-    symbolic_code CHAR(63) NOT NULL UNIQUE,
+    title VARCHAR(63) NOT NULL UNIQUE,
+    symbolic_code VARCHAR(63) NOT NULL UNIQUE,
     INDEX index_category_title (title)
 );
 
 CREATE TABLE IF NOT EXISTS lot (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date_created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    title CHAR(127) NOT NULL,
-    description CHAR(255) NOT NULL,
-    img CHAR(255) NOT NULL UNIQUE,
+    title VARCHAR(127) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    img VARCHAR(255) NOT NULL UNIQUE,
     starting_price INT NOT NULL,
     completion_date DATETIME NOT NULL,
     bid_step INT NOT NULL,
@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS bid (
 CREATE TABLE IF NOT EXISTS person (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date_created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    email CHAR(63) NOT NULL UNIQUE,
-    name CHAR(63) NOT NULL,
-    password CHAR(63) NOT NULL,
-    contacts CHAR(63) NOT NULL
+    email VARCHAR(63) NOT NULL UNIQUE,
+    name VARCHAR(63) NOT NULL,
+    password VARCHAR(63) NOT NULL,
+    contacts VARCHAR(63) NOT NULL
 );
 
 ALTER TABLE lot
