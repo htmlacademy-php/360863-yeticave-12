@@ -49,10 +49,10 @@ function db_get_prepare_stmt($link, $sql, $data = [])
             if (is_int($value)) {
                 $type = 'i';
             }
-            elseif (is_string($value)) {
+            else if (is_string($value)) {
                 $type = 's';
             }
-            elseif (is_double($value)) {
+            else if (is_double($value)) {
                 $type = 'd';
             }
 

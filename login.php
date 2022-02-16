@@ -1,9 +1,10 @@
 <?php
-require_once('helpers.php');
+require_once('init.php');
+/*require_once('helpers.php');
 require_once('data.php');
 require_once('config.php');
 require_once('validate-form.php');
-require_once('functions.php');
+require_once('functions.php');*/
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
  * @var int $userName - переменная имя пользователя
