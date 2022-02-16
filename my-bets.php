@@ -6,7 +6,7 @@ require_once('data.php');
 require_once('helpers.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - массив для вывода категорий
  * @var array $safeUserData - массив данных залогиненного юзера
@@ -16,33 +16,13 @@ if (!isset($_SESSION['user'])) {
 } else {
     $safeData = getSafeData($_REQUEST);
     $userBids = getUserBids($CONNECTION, (int)$safeUserData['id']);
-    foreach ($userBids as $key => $userBid) {
-        $userBids[$key] = prepareData($userBid);
-    }
-
-    foreach ($userBids as $key => $userBid) {
-        $userBids[$key]['time_passed'] = getTimePassed($userBid['bidDate']);
-        $userBids[$key]['lastBidUserId'] = getLastBidUserId($CONNECTION, (int)$userBid['lotId']);
-        if ($userBids[$key]['timeLeft']["hoursLeft"] === '00') {
-            $userBids[$key]['timerClass'] = 'timer--finishing';
-            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
-
-        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] == (int)$userBids[$key]['person_id']) {
-            $userBids[$key]['timerClass'] = 'timer--win';
-            $userBids[$key]['timerText'] = 'Ставка выиграла';
-            $userBids[$key]['userContacts'] = $userBid['contacts'];
-        } elseif (strtotime($userBids[$key]['completion_date']) <= strtotime("now") && (int)$userBids[$key]['lastBidUserId']['person_id'] != (int)$userBids[$key]['person_id']) {
-            $userBids[$key]['timerClass'] = 'timer--end';
-            $userBids[$key]['timerText'] = 'Торги окончены';
-        } else {
-            $userBids[$key]['timerClass'] = ' ';
-            $userBids[$key]['timerText'] = $userBid['timeLeft']['hoursLeft'] . ':' . $userBid['timeLeft']['minutesLeft'];
-        }
+    if (!empty($userBids)) {
+        $userBids = formatBetsData($CONNECTION, $userBids);
     }
 
     $content = include_template('bets-tmp.php', [
         'categories' => $categories,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'safeData' => $safeData,
         'userBids' => $userBids,
     ]);
@@ -50,14 +30,8 @@ if (!isset($_SESSION['user'])) {
 
     print include_template('layout.php', [
         'title' => $title,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'content' => $content,
         'categories' => $categories,
     ]);
 }
-
-
-
-
-
-

@@ -59,7 +59,7 @@
                 <span class="form__error">Напишите как с вами связаться</span>
             <?php endif; ?>
         </div>
-        <?php if (count($errors) > 0): ?>
+        <?php if (!empty($errors)): ?>
             <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
         <?php endif; ?>
         <button type="submit" class="button">Зарегистрироваться</button>

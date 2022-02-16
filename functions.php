@@ -177,17 +177,17 @@ function getPaginationData(int $adsCount, array $pagination, array $getData): ar
         $pagination['curPage'] = (int)$getData['page'];
     }
 
-    $pagination['pagesCount'] = ceil($adsCount / $pagination['pageItems']);
+    $pagination['pagesCount'] = (int)ceil($adsCount / $pagination['pageItems']);
     $pagination['offset'] = ($pagination['curPage'] - 1) * $pagination['pageItems'];
     $pagination['pages'] = range(1, $pagination['pagesCount']);
 
     $pagination['isLastPageExist'] = true;
-    if ($pagination['curPage'] == $pagination['pagesCount']) {
+    if ($pagination['curPage'] === $pagination['pagesCount']) {
         $pagination['isLastPageExist'] = false;
     }
 
     $pagination['isFirstPageExist'] = true;
-    if ($pagination['curPage'] == 1) {
+    if ($pagination['curPage'] === 1) {
         $pagination['isFirstPageExist'] = false;
     }
 

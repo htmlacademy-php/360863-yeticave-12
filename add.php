@@ -6,7 +6,7 @@ require_once('validate-form.php');
 require_once('config.php');
 
 /* @var mysqli $CONNECTION - ссылка для соединения с базой данных
- * @var int $user_name - переменная имя пользователя
+ * @var int $userName - переменная имя пользователя
  * @var string $title - переменная title страницы
  * @var array $categories - список категорий
  */
@@ -27,13 +27,8 @@ if (isset($_SESSION['user'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $safeData = getSafeData($_POST);
 
-
         if ($_FILES['lot-img']['size'] > 0) {
-            $fileName = $_FILES['lot-img']['name'];
-            $filePath = __DIR__ . '/uploads/';
-            $imgUrlPost = $filePath . $fileName;
-            move_uploaded_file($_FILES['lot-img']['tmp_name'], $filePath . $fileName);
-            $imgValue = $filePath . $fileName;
+            $imgValue = getFileName();
         }
 
         $errors = validateForm($requiredFields, $safeData);
@@ -57,7 +52,7 @@ if (isset($_SESSION['user'])) {
 
     print include_template('layout.php', [
         'title' => $title,
-        'user_name' => $user_name,
+        'userName' => $userName,
         'content' => $content,
         'categories' => $categories,
     ]);

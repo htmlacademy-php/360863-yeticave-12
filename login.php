@@ -20,7 +20,7 @@ $safeData = [];
 $errors = [];
 $errorsLogin = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $safeData = getSafeData($_POST);
     $errors = validateForm($requiredFields, $safeData);
     $errorsLogin = checkLoginData($CONNECTION, $safeData['email'], $safeData['password'], $errors);

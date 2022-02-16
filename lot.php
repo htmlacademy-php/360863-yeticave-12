@@ -46,6 +46,7 @@ if (empty($safeData['id'])) {
         $errors = [];
         $lotPrice = (int)str_replace(' ', '', $lot['price']);
         $bidStep = (int)$lot['bid_step'];
+        $lot['min_bid'] = formatAdPrice($bidStep + $lotPrice);
         $requiredFields = [
             'cost',
         ];
@@ -53,7 +54,7 @@ if (empty($safeData['id'])) {
             $bids = formatBidsData($bids);
         }
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors = validateCost($requiredFields, $safeData, $lotPrice, $bidStep);
             if (empty($errors)) {
                 insertBid($CONNECTION, $safeData['cost'], (int)$safeUserData['id'], (int)$lot['id']);

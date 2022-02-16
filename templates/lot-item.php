@@ -19,20 +19,20 @@
                 <p class="lot-item__description"><?= $lot['description']; ?></p>
             </div>
             <div class="lot-item__right">
-                <?php if ($isTakeBidsVisible): ?>
-                    <div class="lot-item__state">
-                        <div class="lot-item__timer timer <?= ($lot['timeLeft']["hoursLeft"] === '00') ? 'timer--finishing' : ''; ?>">
-                            <?= $lot['timeLeft']["hoursLeft"] . ':' . $lot['timeLeft']["minutesLeft"]; ?>
+                <div class="lot-item__state">
+                    <div class="lot-item__timer timer <?= ($lot['timeLeft']["hoursLeft"] === '00') ? 'timer--finishing' : ''; ?>">
+                        <?= $lot['timeLeft']["hoursLeft"] . ':' . $lot['timeLeft']["minutesLeft"]; ?>
+                    </div>
+                    <div class="lot-item__cost-state">
+                        <div class="lot-item__rate">
+                            <span class="lot-item__amount">Текущая цена</span>
+                            <span class="lot-item__cost"><?= $lot['price']; ?></span>
                         </div>
-                        <div class="lot-item__cost-state">
-                            <div class="lot-item__rate">
-                                <span class="lot-item__amount">Текущая цена</span>
-                                <span class="lot-item__cost"><?= $lot['price']; ?></span>
-                            </div>
-                            <div class="lot-item__min-cost">
-                                Мин. ставка <span><?= $lot['min_bid']; ?></span>
-                            </div>
+                        <div class="lot-item__min-cost">
+                            Мин. ставка <span><?= $lot['min_bid']; ?></span>
                         </div>
+                    </div>
+                    <?php if ($isTakeBidsVisible): ?>
                         <form class="lot-item__form" action="/lot.php?id=<?= $lot['id']; ?>" method="post"
                               autocomplete="off">
                             <p class="lot-item__form-item form__item <?= (!empty($errors['cost'])) ? 'form__item--invalid' : '' ?>">
@@ -45,8 +45,8 @@
                             </p>
                             <button type="submit" class="button">Сделать ставку</button>
                         </form>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
                 <div class="history">
                     <h3>История ставок (<span><?= count($bids); ?></span>)</h3>
                     <?php if (count($bids) > 0): ?>

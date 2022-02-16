@@ -21,12 +21,12 @@
                 <input type="search" name="search" placeholder="Поиск лота" value="<?= $searchWord ?? ''; ?>">
                 <input class="main-header__search-btn" type="submit" name="find" value="Найти">
             </form>
-            <?php if (isset($user_name)): ?>
+            <?php if (isset($userName)): ?>
                 <a class="main-header__add-lot button" href="/add.php">Добавить лот</a>
                 <nav class="user-menu">
 
                     <div class="user-menu__logged">
-                        <p><?= $user_name; ?></p>
+                        <p><?= $userName; ?></p>
                         <a class="user-menu__bets" href="/my-bets.php">Мои ставки</a>
                         <a class="user-menu__logout" href="/logout.php">Выход</a>
                     </div>
